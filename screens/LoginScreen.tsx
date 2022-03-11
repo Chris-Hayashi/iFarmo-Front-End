@@ -21,7 +21,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
 
     axios.post("https://nodejs-ifarmo.herokuapp.com/api/auth/login", userObj)
       .then(res => {
-        console.log(res);
+        // console.log(res);
         navigation.navigate('Home');
       })
       .catch(err => {

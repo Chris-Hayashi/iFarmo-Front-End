@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, FlatList } from 'react-native';
 import { Card, Button, Icon} from 'react-native-elements';
 import SearchBar from 'react-native-platform-searchbar';
@@ -6,58 +6,77 @@ import SearchBar from 'react-native-platform-searchbar';
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 import { RootStackScreenProps } from '../types';
-
-
+import axios from 'axios';
 
 export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>) {
 
   const [search, setSearch] = useState("");
+  const [newItemArray, setNewItemArray] = useState([]);
+  // let newItemArray: any[] = [];
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  const getProducts = () => {
+    axios.get("https://nodejs-ifarmo.herokuapp.com/api/products")
+    .then(res => {
+      console.log("GET PRODUCTS");
+      setNewItemArray(res.data);
+    });
+  }
 
   let itemArray = [
     {
       name: "apples",
-      price: "$3.99/pound",
+      price: "$3.99/lb",
       desc: "McIntosh",
+      userPosted: "chris",
       datePosted: "1 day ago",
       distance: "5 miles away",
       id: 1
     },
     {
       name: "bananas",
-      price: "$3.99/pound",
+      price: "$3.99/lb",
       desc: "Cavendish",
+      userPosted: "suds",
       datePosted: "4 days ago",
       distance: "10 miles away",
       id: 2
     },
     {
       name: "oranges",
-      price: "$3.99/pound",
+      price: "$3.99/lb",
       desc: "Blood",
+      userPosted: "ahror",
       datePosted: "a week ago",
       distance: "15 miles away",
       id: 3
     },
     {
       name: "strawberries",
-      price: "$4.99/pound",
+      price: "$4.99/lb",
       desc: "Alpine",
+      userPosted: "ahror2.0",
       datePosted: "two weeks ago",
       distance: "10 miles away",
       id: 4
     },
     {
       name: "blueberries",
-      price: "$1.99/pound",
+      price: "$1.99/lb",
       desc: "rabbiteye",
+      userPosted: "realahror",
       datePosted: "a week ago",
       distance: "4 miles away",
       id: 5
     },
     {
       name: "Grapefruit",
-      price: "$9.99/unit",
+      price: "$9.99/lb",
       desc: "White & Pink",
+      userPosted: "addison",
       datePosted: "4 days ago",
       distance: "5 miles away",
       id: 6
@@ -65,16 +84,20 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   ];
 
   const Grid = ({ items }: any) => {
-    // let id = 0;
-    itemArray.map((item) => {
-      console.log(item.name);
+    items.map((item: any, key: any) => {
+      console.log("map executed");
+      console.log(item);
+      // console.log(item.name);
     });
     return (
       <View style={styles.grid}>
         <FlatList
-          data={itemArray}
-          renderItem={({ item }) => (
+          data={items}
+          renderItem={({ item, index }) => (
             <Card containerStyle={styles.gridCard}>
+
+              {/* Card Content */}
+              {/* <Text style={styles.itemUserPosted}>{item.userPosted}</Text> */}
               <Card.Image
                 style={{ padding: 0 }}
                 source={{
@@ -83,14 +106,14 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
                 }}
               />
               <Card.Divider />
-              <Card.Title>{item.name}</Card.Title>
+              <Card.Title style={styles.itemName}>{item.name}</Card.Title>
+              <Text style={styles.itemPrice}>${item.price} / {item.unitType}</Text>
+              {/* <Text style={styles.itemDistance}>{item.distance}</Text> */}
+
             </Card>
-            // <Text style={styles.gridCard} key={item.id}>
-            //   {item.name}
-            // </Text>
           )}
           numColumns={2}
-        // keyExtractor={(item: object, index: number) => name}
+        keyExtractor={(item, index) => index.toString()}
         />
       </View>
     );
@@ -113,7 +136,7 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
           theme='light'
         />
         {/* <Text>Welcome to the Home Screen!</Text> */}
-        <Grid items={itemArray} />
+        <Grid items={newItemArray} />
       </View>
     );
   }
@@ -141,5 +164,18 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
     gridCard: {
       flex: 3
       // width: 15
+    },
+    itemUserPosted: {
+      paddingBottom: 5
+    },
+    itemName: {
+      textAlign: 'left'
+    },
+    itemPrice: {
+      textAlign: 'right'
+    },
+    itemDistance: {
+      textAlign: 'right'
     }
+
   });
