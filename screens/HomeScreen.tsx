@@ -85,8 +85,8 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
 
   const Grid = ({ items }: any) => {
     items.map((item: any, key: any) => {
-      console.log("map executed");
-      console.log(item);
+      // console.log("map executed");
+      // console.log(item);
       // console.log(item.name);
     });
     return (
