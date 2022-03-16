@@ -1,10 +1,12 @@
-import { StyleSheet, TextInput } from 'react-native';
+import {StyleSheet, TextInput } from 'react-native';
+import AsyncStorage  from '@react-native-async-storage/async-storage';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 import { RootStackScreenProps } from '../types';
 import { Input, Button } from 'react-native-elements';
-import { useEffect, useState } from 'react';
+import {useEffect, useState } from 'react';
+
 import axios from 'axios';
 
 
@@ -21,7 +23,11 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
 
     axios.post("https://nodejs-ifarmo.herokuapp.com/api/auth/login", userObj)
       .then(res => {
-        // console.log(res);
+        // console.log('auth-token ', res.headers['auth-token']);
+        // async() => await window.localStorage.setItem("auth-token", res.headers['auth-token']);
+        // console.log("localStorage token: ", async() => await localStorage.getItem("auth-token"));
+        setAuthToken(res.headers['auth-token']);
+        getAuthToken();
         navigation.navigate('Home');
       })
       .catch(err => {
@@ -29,6 +35,16 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
         console.log(err.response.request._response);
       });
   }
+  
+  const setAuthToken = async(authToken: string) => {
+    await AsyncStorage.setItem("auth-token", authToken);
+  }
+
+  const getAuthToken = async() => {
+    const token = await AsyncStorage.getItem("auth-token");
+    console.log("localStorage token: ", token);
+  }
+
 
   const signUpBtnHandler = () => {
     navigation.navigate("Register");
