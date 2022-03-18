@@ -2,6 +2,9 @@ import { useState, version } from 'react';
 import { StyleSheet, FlatList, Animated, View, Text, Image } from 'react-native';
 import { Card, Button, Icon} from 'react-native-elements';
 import React from 'react';
+import axios from 'axios';
+import navigation from '../navigation';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NameText = () => {
     return (<Text style = {styles.row}>Name:</Text>);
@@ -30,9 +33,7 @@ axios.get('https://nodejs-ifarmo.herokuapp.com/api/user/:id/', userObj)
         .catch(err => {
           alert(err.response.request._response);
           console.log(err.response.request._response);
-        });tmp = {
-
-}
+        });
 const UserProfile = () => {
     return (
         <View style={styles.container}>
@@ -85,5 +86,10 @@ const styles = StyleSheet.create({
         borderBottomWidth: StyleSheet.hairlineWidth
     }
 });
+
+const getAuthToken = async() => {
+    const token = await AsyncStorage.getItem("auth-token");
+    console.log("localStorage token: ", token);
+}
 
 export default UserProfile;
