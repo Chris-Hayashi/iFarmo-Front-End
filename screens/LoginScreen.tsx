@@ -23,9 +23,6 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
 
     axios.post("https://nodejs-ifarmo.herokuapp.com/api/auth/login", userObj)
       .then(res => {
-        // console.log('auth-token ', res.headers['auth-token']);
-        // async() => await window.localStorage.setItem("auth-token", res.headers['auth-token']);
-        // console.log("localStorage token: ", async() => await localStorage.getItem("auth-token"));
         setAuthToken(res.headers['auth-token']);
         getAuthToken();
         navigation.navigate('Home');
@@ -42,7 +39,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
 
   const getAuthToken = async() => {
     const token = await AsyncStorage.getItem("auth-token");
-    console.log("localStorage token: ", token);
+    // console.log("localStorage token: ", token);
   }
 
 
