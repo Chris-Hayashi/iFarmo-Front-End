@@ -6,6 +6,8 @@ import axios from 'axios';
 import navigation from '../navigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const jwt = require("jsonwebtoken");
+
 const NameText = () => {
     return (<Text style = {styles.row}>Name:</Text>);
 }
@@ -18,22 +20,32 @@ const LocationText = () =>  {
     return (<Text style = {styles.row}>Location:</Text>);
 }
 
-const getUser = () => {
-    
+const getUserId = async () => {
+    var userId = ""
+    try {
+        const token = await AsyncStorage.getItem('token');
+        if(token != null){
+            var decoded_token = jwt.decode(token);
+            userId = token._id;
+        }
+    }
+    catch(e){
+        console.log("damn it");
+    }
+    return userId;
 }
-axios.get('https://nodejs-ifarmo.herokuapp.com/api/user/:id/', userObj)
-        .then(res => {
-          // res.data to access token
-          alert("You successfully registered");
-          console.log(res);
 
-          /* Go back to login page */
-          navigation.navigate('Login');
-        })
-        .catch(err => {
-          alert(err.response.request._response);
-          console.log(err.response.request._response);
-        });
+//get user id
+// axios.get('https://nodejs-ifarmo.herokuapp.com/api/user/:id/', userObj)
+//         .then(res => {
+//           // res.data to access token
+//           console.log(res);
+//         })
+//         .catch(err => {
+//           alert(err.response.request._response);
+//           console.log(err.response.request._response);
+//         });
+//get and set user information from the user id
 const UserProfile = () => {
     return (
         <View style={styles.container}>
