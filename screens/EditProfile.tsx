@@ -1,6 +1,6 @@
 import { useState, version } from 'react';
 import { StyleSheet, FlatList, Animated, View, Text, Image } from 'react-native';
-import { Card, Button, Icon} from 'react-native-elements';
+import { Card, Button, Icon, Input} from 'react-native-elements';
 import React from 'react';
 import axios from 'axios';
 import navigation from '../navigation';
@@ -8,16 +8,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const jwt = require("jsonwebtoken");
 
-const NameText = () => {
-    return (<Text style = {styles.row}>Name:</Text>);
+const NameInput = () => {
+    return (<Input placeholder='BASIC INPUT'/>);
 }
 
-const OccupationText = () => { 
-    return (<Text style = {styles.row}>Occupation:</Text>);
-}
-
-const LocationText = () =>  {
-    return (<Text style = {styles.row}>Location:</Text>);
+const LocationInput = () =>  {
+    return (
+        <Input placeholder='Location'/>
+    );
 }
 
 const getUserId = async () => {
@@ -38,7 +36,7 @@ const getUserId = async () => {
 const userId = getUserId();
 //get user information
 const apiBaseURL = 'https://nodejs-ifarmo.herokuapp.com/api/'
-axios.get('user/:' + userId)
+axios.put('user/:' + userId)
 .then(res => {
     // res.data to access token
     var userName;
@@ -47,8 +45,9 @@ axios.get('user/:' + userId)
     alert(err.response.request._response);
     console.log(err.response.request._response);
 });
+
 //get and set user information from the user id
-const UserProfile = () => {
+const EditProfile = () => {
     return (
         <View style={styles.container}>
             <Card>
@@ -61,10 +60,8 @@ const UserProfile = () => {
                         'https://awildgeographer.files.wordpress.com/2015/02/john_muir_glacier.jpg',
                     }}
                 />
-                <NameText/>
-                <Text>{}</Text>
-                <OccupationText />
-                <LocationText />
+                <NameInput/>
+                <LocationInput />
                 <Button onPress={history.state('/EditProfile')}> 
                     icon={
                         <Icon
@@ -83,7 +80,6 @@ const UserProfile = () => {
                 </Button>
             </Card>
         </View>
-        
     );
 };
 const styles = StyleSheet.create({
