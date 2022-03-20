@@ -5,20 +5,7 @@ import React from 'react';
 import axios from 'axios';
 import navigation from '../navigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 const jwt = require("jsonwebtoken");
-
-const NameText = () => {
-    return (<Text style = {styles.row}>Name:</Text>);
-}
-
-const OccupationText = () => { 
-    return (<Text style = {styles.row}>Occupation:</Text>);
-}
-
-const LocationText = () =>  {
-    return (<Text style = {styles.row}>Location:</Text>);
-}
 
 const getUserId = async () => {
     var userId = ""
@@ -34,25 +21,56 @@ const getUserId = async () => {
     }
     return userId;
 }
-
 const userId = getUserId();
-//get user information
 const apiBaseURL = 'https://nodejs-ifarmo.herokuapp.com/api/'
+
+//declare fields
+var name = "";
+var contactInfo = "";
+var role = "";
+var bio = "";
+
+//get user information
 axios.get('user/:' + userId)
 .then(res => {
-    // res.data to access token
-    var userName;
+    // not sure how to get this to work @CHRIS
+    name = res.name;
+    contactInfo = res.contactInfo;
+    role = res.role;
+    bio = res.bio;
 })
 .catch(err => {
     alert(err.response.request._response);
     console.log(err.response.request._response);
 });
+
+//set user info 
+const NameText = () => {
+    return (<Text style = {styles.row}>{name}</Text>);
+}
+
+const OccupationText = () => { 
+    return (<Text style = {styles.row}>Occupation: {role}</Text>);
+}
+
+const LocationText = () =>  {
+    return (<Text style = {styles.row}>Location: </Text>);
+}
+
+const BioText = () =>  {
+    return (<Text style = {styles.row}>Bio: {bio}</Text>);
+}
+
+const ContactText = () =>  {
+    return (<Text style = {styles.row}>Contact Information: {contactInfo}</Text>);
+}
+
 //get and set user information from the user id
 const UserProfile = () => {
     return (
         <View style={styles.container}>
             <Card>
-                <Card.Title>HELLO WORLD</Card.Title>
+                <Card.Title>{name}</Card.Title>
                 <Card.Divider />
                 <Card.Image
                     style={{ padding: 0 }}
@@ -61,10 +79,11 @@ const UserProfile = () => {
                         'https://awildgeographer.files.wordpress.com/2015/02/john_muir_glacier.jpg',
                     }}
                 />
-                <NameText/>
                 <Text>{}</Text>
                 <OccupationText />
                 <LocationText />
+                <BioText />
+                <ContactText />
                 <Button onPress={history.state('/EditProfile')}> 
                     icon={
                         <Icon

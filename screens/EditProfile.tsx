@@ -18,6 +18,24 @@ const LocationInput = () =>  {
     );
 }
 
+const ContactInput = () =>  {
+    return (
+        <Input placeholder='Location'/>
+    );
+}
+
+const PasswordInput = () =>  {
+    return (
+        <Input placeholder='Location'/>
+    );
+}
+
+const BioInput = () =>  {
+    return (
+        <Input placeholder='Location'/>
+    );
+}
+
 const getUserId = async () => {
     var userId = ""
     try {
@@ -62,6 +80,9 @@ const EditProfile = () => {
                 />
                 <NameInput/>
                 <LocationInput />
+                <BioInput />
+                <PasswordInput />
+                <ContactInput />
                 <Button onPress={history.state('/EditProfile')}> 
                     icon={
                         <Icon
@@ -103,4 +124,4 @@ const getAuthToken = async() => {
 }
 
 
-export default UserProfile;
+export default EditProfile;
