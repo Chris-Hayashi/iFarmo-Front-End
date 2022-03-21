@@ -1,11 +1,40 @@
 import { useState, version } from 'react';
 import { StyleSheet, FlatList, Animated, View, Text, Image } from 'react-native';
-import { Card, Button, Icon} from 'react-native-elements';
+import { Card, Button, Icon, Input} from 'react-native-elements';
 import React from 'react';
 import axios from 'axios';
 import navigation from '../navigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const jwt = require("jsonwebtoken");
+
+const NameInput = () => {
+    return (<Input placeholder='BASIC INPUT'/>);
+}
+
+const LocationInput = () =>  {
+    return (
+        <Input placeholder='Location'/>
+    );
+}
+
+const ContactInput = () =>  {
+    return (
+        <Input placeholder='Location'/>
+    );
+}
+
+const PasswordInput = () =>  {
+    return (
+        <Input placeholder='Location'/>
+    );
+}
+
+const BioInput = () =>  {
+    return (
+        <Input placeholder='Location'/>
+    );
+}
 
 const getUserId = async () => {
     var userId = ""
@@ -21,56 +50,26 @@ const getUserId = async () => {
     }
     return userId;
 }
+
 const userId = getUserId();
-const apiBaseURL = 'https://nodejs-ifarmo.herokuapp.com/api/'
-
-//declare fields
-var name = "";
-var contactInfo = "";
-var role = "";
-var bio = "";
-
 //get user information
-axios.get('user/:' + userId)
+const apiBaseURL = 'https://nodejs-ifarmo.herokuapp.com/api/'
+axios.put('user/:' + userId)
 .then(res => {
-    // not sure how to get this to work @CHRIS
-    name = res.name;
-    contactInfo = res.contactInfo;
-    role = res.role;
-    bio = res.bio;
+    // res.data to access token
+    var userName;
 })
 .catch(err => {
     alert(err.response.request._response);
     console.log(err.response.request._response);
 });
 
-//set user info 
-const NameText = () => {
-    return (<Text style = {styles.row}>{name}</Text>);
-}
-
-const OccupationText = () => { 
-    return (<Text style = {styles.row}>Occupation: {role}</Text>);
-}
-
-const LocationText = () =>  {
-    return (<Text style = {styles.row}>Location: </Text>);
-}
-
-const BioText = () =>  {
-    return (<Text style = {styles.row}>Bio: {bio}</Text>);
-}
-
-const ContactText = () =>  {
-    return (<Text style = {styles.row}>Contact Information: {contactInfo}</Text>);
-}
-
 //get and set user information from the user id
-const UserProfile = () => {
+const EditProfile = () => {
     return (
         <View style={styles.container}>
             <Card>
-                <Card.Title>{name}</Card.Title>
+                <Card.Title>HELLO WORLD</Card.Title>
                 <Card.Divider />
                 <Card.Image
                     style={{ padding: 0 }}
@@ -79,11 +78,11 @@ const UserProfile = () => {
                         'https://awildgeographer.files.wordpress.com/2015/02/john_muir_glacier.jpg',
                     }}
                 />
-                <Text>{}</Text>
-                <OccupationText />
-                <LocationText />
-                <BioText />
-                <ContactText />
+                <NameInput/>
+                <LocationInput />
+                <BioInput />
+                <PasswordInput />
+                <ContactInput />
                 <Button onPress={history.state('/EditProfile')}> 
                     icon={
                         <Icon
@@ -102,7 +101,6 @@ const UserProfile = () => {
                 </Button>
             </Card>
         </View>
-        
     );
 };
 const styles = StyleSheet.create({
@@ -126,4 +124,4 @@ const getAuthToken = async() => {
 }
 
 
-export default UserProfile;
+export default EditProfile;
