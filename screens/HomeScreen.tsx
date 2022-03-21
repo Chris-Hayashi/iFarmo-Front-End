@@ -68,8 +68,8 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
       });
   }
 
-  const postProduct = async() => {
-    let token : any = await AsyncStorage.getItem("auth-token");
+  const postProduct = async () => {
+    let token: any = await AsyncStorage.getItem("auth-token");
     console.log("token: ", JSON.stringify(token));
 
     axios.post('https://nodejs-ifarmo.herokuapp.com/api/products', productObj, {
@@ -149,6 +149,10 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
         </Overlay>
       </View>
     );
+  }
+
+  const viewProductOverlay = () => {
+
   }
 
   const Grid = ({ items }: any) => {

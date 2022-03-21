@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { StyleSheet, ColorSchemeName, Pressable } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -23,6 +23,8 @@ import RegisterScreen from '../screens/RegisterScreen';
 import ProduceScreen from '../screens/ProduceScreen';
 import JobsScreen from '../screens/JobsScreen';
 import EquipmentScreen from '../screens/EquipmentScreen';
+import UserProfile from '../screens/UserProfile';
+import EditProfile from '../screens/EditProfile';
 
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -48,10 +50,14 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function RootNavigator() {
   return (
     <Stack.Navigator>
+      {/* <Stack.Screen name="UserProfile" component={UserProfile} /> */}
+      {/* <Stack.Screen name="EditProfile" component={EditProfile} /> */}
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Home" component={BottomTabNavigator}
-        options={{headerShown: false, headerTitle: (props : any) => <Header {...props} /> }} />
+        options={{ headerShown: false, headerTitle: (props: any) => <Header {...props} /> }} />
+      {/* <Stack.Screen name="Home" component={BottomTabNavigator}
+         options={{headerShown: false, headerTitle: (props : any) => <Header {...props} /> }} /> */}
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
@@ -107,36 +113,6 @@ function BottomTabNavigator() {
           tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
         }}
       />
-      {/* <BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
-        })}
-      />
-      <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
-        options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
-      /> */}
     </BottomTab.Navigator>
   );
 }
@@ -151,10 +127,12 @@ function TabBarIcon(props: {
   return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
 }
 
-function Header() {
+function Header(props: any) {
   return (
-    <View>
-      <FontAwesome size={30} style={{ marginBottom: -3}} name='car'/>
+    <View style={styles.header}>
+      <Text> test </Text>
+      {/* <FontAwesome size={30} style={{ marginBottom: -3}} name='car'/> */}
+      {/* <Text> test </Text> */}
     </View>
     // <Image
     //   style={{ width: 50, height: 50 }}
@@ -162,3 +140,10 @@ function Header() {
     // />
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    // flexDirection: 'row',
+    // justifyContent: 'space-between'
+  }
+});
