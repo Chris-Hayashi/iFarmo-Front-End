@@ -95,16 +95,17 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
     <View style={styles.container}>
 
       {/* User Input */}
-      <Input placeholder='Username' onChangeText={setUsername} />
+      <Input placeholder='Username' autoCapitalize='none' onChangeText={setUsername}
+      />
       {usernameErrorMsg.length > 0 && !firstRender && <Text style={styles.textDanger}>{usernameErrorMsg}</Text>}
 
-      <Input placeholder='Password' onChangeText={setPassword} />
+      <Input placeholder='Password' autoCapitalize='none' onChangeText={setPassword} />
       {passwordErrorMsg.length > 0 && !firstRender && <Text style={styles.textDanger}>{passwordErrorMsg}</Text>}
 
-      <Input placeholder='E-Mail' onChangeText={setEmail} />
+      <Input placeholder='E-Mail' autoCapitalize='none' onChangeText={setEmail} />
       {/* {passwordErrorMsg.length > 0 && !firstRender && <Text style={styles.textDanger}>{passwordErrorMsg}</Text>} */}
 
-      
+
       <Input placeholder='Full Name' onChangeText={setFullName} />
       {fullNameErrorMsg.length > 0 && !firstRender && <Text style={styles.textDanger}>{fullNameErrorMsg}</Text>}
 
