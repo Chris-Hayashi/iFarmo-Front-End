@@ -5,10 +5,11 @@
  */
 import { FontAwesome } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme, NavigationHelpersContext } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { StyleSheet, ColorSchemeName, Pressable } from 'react-native';
+import { Button, StyleSheet, ColorSchemeName, Pressable, Alert } from 'react-native';
+import { Icon } from 'react-native-elements';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -30,12 +31,14 @@ import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../typ
 import LinkingConfiguration from './LinkingConfiguration';
 import HomeScreen from '../screens/HomeScreen';
 import { Text, View } from '../components/Themed';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
-      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+    >
       <RootNavigator />
     </NavigationContainer>
   );
@@ -49,19 +52,12 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   return (
-    <Stack.Navigator>
-      {/* <Stack.Screen name="UserProfile" component={UserProfile} /> */}
-      {/* <Stack.Screen name="EditProfile" component={EditProfile} /> */}
+    <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="Home" component={BottomTabNavigator}
-        options={{ headerShown: false, headerTitle: (props: any) => <Header {...props} /> }} />
-      {/* <Stack.Screen name="Home" component={BottomTabNavigator}
-         options={{headerShown: false, headerTitle: (props : any) => <Header {...props} /> }} /> */}
-      <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
-      </Stack.Group>
+      <Stack.Screen name="Home" component={BottomTabNavigator} />
+      <Stack.Screen name="UserProfile" component={UserProfile} />
+      <Stack.Screen name="EditProfile" component={EditProfile} />
     </Stack.Navigator>
   );
 }
@@ -72,13 +68,32 @@ function RootNavigator() {
  */
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
-function BottomTabNavigator() {
+function BottomTabNavigator({ navigation }: RootTabScreenProps<'HomeTab'>) {
   const colorScheme = useColorScheme();
 
   return (
     <BottomTab.Navigator
       initialRouteName="HomeTab"
       screenOptions={{
+        headerShown: true,
+        headerLeft: () =>
+          <Icon
+            name='user'
+            type='font-awesome-5' // other icons are from 'antdesign'
+            solid={true}
+            style={styles.profileIcon}
+            onPress={() => navigation.navigate('UserProfile')}
+          />,
+        headerRight: () =>
+          <Icon
+            name='log-out'
+            type='feather'
+            containerStyle={styles.logoutIcon}
+            onPress={async () => {
+              await AsyncStorage.removeItem('auth-token');
+              navigation.navigate('Login');
+            }}
+          />,
         tabBarActiveTintColor: Colors[colorScheme].tint,
       }}>
       <BottomTab.Screen
@@ -129,21 +144,16 @@ function TabBarIcon(props: {
 
 function Header(props: any) {
   return (
-    <View style={styles.header}>
-      <Text> test </Text>
-      {/* <FontAwesome size={30} style={{ marginBottom: -3}} name='car'/> */}
-      {/* <Text> test </Text> */}
+    <View>
     </View>
-    // <Image
-    //   style={{ width: 50, height: 50 }}
-    //   source={require('@expo/snack-static/react-native-logo.png')}
-    // />
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    // flexDirection: 'row',
-    // justifyContent: 'space-between'
+  profileIcon: {
+    marginLeft: 20
+  },
+  logoutIcon: {
+    marginRight: 10
   }
 });

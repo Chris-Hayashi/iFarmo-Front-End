@@ -1,11 +1,11 @@
-import {StyleSheet, TextInput } from 'react-native';
-import AsyncStorage  from '@react-native-async-storage/async-storage';
+import { StyleSheet, TextInput } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 import { RootStackScreenProps } from '../types';
 import { Input, Button } from 'react-native-elements';
-import {useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import axios from 'axios';
 
@@ -14,6 +14,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
 
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
+  const [hidePassword, setHidePassword] = useState(true);
 
   const loginBtnHandler = () => {
     const userObj = {
@@ -32,12 +33,12 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
         console.log(err.response.request._response);
       });
   }
-  
-  const setAuthToken = async(authToken: string) => {
+
+  const setAuthToken = async (authToken: string) => {
     await AsyncStorage.setItem("auth-token", authToken);
   }
 
-  const getAuthToken = async() => {
+  const getAuthToken = async () => {
     const token = await AsyncStorage.getItem("auth-token");
     // console.log("localStorage token: ", token);
   }
@@ -51,15 +52,22 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'Login'
     <View style={styles.container}>
 
       {/* User Input */}
-      <Input placeholder='Username'
+      <Input
+        placeholder='Username'
+        autoCapitalize='none'
         leftIcon={{ type: 'font-awesome', name: 'user' }}
         leftIconContainerStyle={styles.usernameIconContainerStyle}
         onChangeText={setLogin}
       />
-      <Input placeholder='Password'
+      <Input
+        placeholder='Password'
+        autoCapitalize='none'
+        secureTextEntry={hidePassword}
         leftIcon={{ type: 'font-awesome', name: 'lock' }}
         leftIconContainerStyle={styles.passwordIconContainerStyle}
-        rightIcon={{ type: 'font-awesome', name: 'eye' }}
+        rightIcon={hidePassword ?
+          { type: 'font-awesome', name: 'eye-slash', onPress: () => setHidePassword(!hidePassword) } :
+          { type: 'font-awesome', name: 'eye', onPress: () => setHidePassword(!hidePassword) }}
         onChangeText={setPassword}
       />
 

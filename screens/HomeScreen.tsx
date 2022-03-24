@@ -40,11 +40,10 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   let productObj = {
     'name': '',
     'type': '',
-    'desc': '',
+    'description': '',
     'quantity': '',
     'unitType': '',
-    'price': '',
-    'postedBy': '6232700bbdd46b5c84658ae6'
+    'price': ''
   };
 
 
@@ -115,7 +114,7 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
             }}
           />
           <Input placeholder='Description'
-            onChangeText={(value) => productObj.desc = value}
+            onChangeText={(value) => productObj.description = value}
             style={{ marginTop: 15 }}
           />
           <Input placeholder='Quantity'
