@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, Dimensions } from 'react-native';
+import { StyleSheet, FlatList, Dimensions, TouchableOpacity } from 'react-native';
 import { Card, FAB, Input, Overlay, Button } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -7,14 +7,17 @@ import SearchBar from 'react-native-platform-searchbar';
 import { Text, View } from '../components/Themed';
 import { RootStackScreenProps } from '../types';
 import axios from 'axios';
+import { addEventListener } from 'expo-linking';
 
 export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>) {
-
   const [search, setSearch] = useState("");
   const [itemArray, setItemArray] = useState([]);
   const [fabVisible, setFabVisible] = useState(true);
   const [overlayVisible, setOverlayVisible] = useState(false);
+  const [prodDescOverlayVisible, setProdDescOverleyVisible] = useState(false);
   const [productName, setProductName] = useState('');
+  const [itemClicked, setItemClicked] = useState(0);
+  const [itemIndex, setItemIndex] = useState(0);
   const [render, setRender] = useState(false);
 
   const productTypes = [
@@ -53,12 +56,41 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   useEffect(() => {
     getProducts();
 
-  }, [render]);
+  }, [render, search]);
 
-  const getProducts = () => {
-    axios.get("https://nodejs-ifarmo.herokuapp.com/api/products")
+  // function to map through product types and return image location
+  function getProductImage(type: string) {
+    switch (type) {
+      case 'Vegetable':
+        return require('../assets/images/vegetables.png');
+      case 'Fruit':
+        return require('../assets/images/fruits.png');
+      case 'Nuts':
+        return require('../assets/images/nuts.png');
+      case 'Meat':
+        return require('../assets/images/meat.png');
+      case 'Dairy':
+        return require('../assets/images/dairy.png');
+      case 'Grains':
+        return require('../assets/images/grains.png');
+      case 'Baked Goods':
+        return require('../assets/images/baked_goods.png');
+      case 'Plants':
+        return require('../assets/images/plants.png');
+      case 'Other':
+        return require('../assets/images/other.png');
+      default:
+        return require('../assets/images/other.png');
+    }
+  }
+
+
+  const getProducts = async () => {
+    await axios.get(`https://nodejs-ifarmo.herokuapp.com/api/products?searchKey=${search}`)
       .then(res => {
         console.log("GET PRODUCTS");
+        // if (search != '')
+        // console.log("res.data: ", res.data);
         setItemArray(res.data);
       })
       .catch(err => {
@@ -87,6 +119,13 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
 
   const toggleOverlay = () => {
     setOverlayVisible(!overlayVisible);
+    return;
+  }
+
+  const toggleProdDescOverley = () => {
+    // setItemIndex(index);
+    setProdDescOverleyVisible(!prodDescOverlayVisible);
+    return;
   }
 
   const AddItemOverlay = () => {
@@ -150,9 +189,19 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
     );
   }
 
-  const viewProductOverlay = () => {
-
-  }
+  const ProdDescOverlay = ({ items }: any) => {
+    return (
+      <View>
+        <Overlay
+          isVisible={prodDescOverlayVisible}
+          onBackdropPress={toggleProdDescOverley}
+          overlayStyle={styles.overlay}
+        >
+          <Text>{items[itemIndex].name}</Text>
+        </Overlay>
+      </View>
+    );
+  };
 
   const Grid = ({ items }: any) => {
     return (
@@ -161,21 +210,29 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
           data={items}
           renderItem={({ item, index }) => (
             <Card containerStyle={styles.gridCard}>
-
-              {/* Card Content */}
-              {/* <Text style={styles.itemUserPosted}>{item.userPosted}</Text> */}
-              <Card.Image
-                style={{ padding: 0 }}
-                source={{
-                  uri:
-                    'https://awildgeographer.files.wordpress.com/2015/02/john_muir_glacier.jpg',
-                }}
-              />
-              <Card.Divider />
-              <Card.Title style={styles.itemName}>{item.name}</Card.Title>
-              <Text style={styles.itemPrice}>${item.price} / {item.unitType}</Text>
-              {/* <Text style={styles.itemDistance}>{item.distance}</Text> */}
-
+              <ProdDescOverlay items={items} />
+              <TouchableOpacity
+                onPress={() => {
+                  toggleProdDescOverley();
+                  setItemIndex(index);
+                }}>
+                {/* Card Content */}
+                {/* <Text style={styles.itemUserPosted}>{item.userPosted}</Text> */}
+                <Card.Image
+                  style={{ padding: 0 }}
+                  source={
+                    // uri:
+                    getProductImage(item.type)
+                      // 'https://awildgeographer.files.wordpress.com/2015/02/john_muir_glacier.jpg',
+                      
+                  }
+                />
+                {/* <ProductImage itemType={item.type} /> */}
+                <Card.Divider />
+                <Card.Title style={styles.itemName}>{item.name}</Card.Title>
+                <Text style={styles.itemPrice}>${item.price} / {item.unitType}</Text>
+                {/* <Text style={styles.itemDistance}>{item.distance}</Text> */}
+              </TouchableOpacity>
             </Card>
           )}
           numColumns={2}
@@ -197,7 +254,10 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
     <View style={[styles.container]}>
       <SearchBar
         placeholder='Search'
-        onChangeText={setSearch}
+        onChangeText={(val) => {
+          setSearch(val);
+          // getProducts();
+        }}
         value={search}
         platform='ios'
         theme='light'
@@ -288,3 +348,5 @@ const styles = StyleSheet.create({
     marginTop: 35
   }
 });
+
+
