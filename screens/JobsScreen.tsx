@@ -17,33 +17,25 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   const [productName, setProductName] = useState('');
   const [render, setRender] = useState(false);
 
-  const productTypes = [
-    { label: 'Vegetable', value: '1' },
-    { label: 'Fruit', value: '2' },
-    { label: 'Nuts', value: '3' },
-    { label: 'Meat', value: '4' },
-    { label: 'Dairy', value: '5' },
-    { label: 'Grains', value: '6' },
-    { label: 'Baked Goods', value: '7' },
-    { label: 'Plants', value: '8' },
-    { label: 'Other', value: '9' },
+  const jobTypes = [
+    { label: 'Equipment Operator', value: '1' },
+    { label: 'Laborer', value: '2' },
+    { label: 'Other', value: '3' },
   ];
   const unitTypes = [
-    { label: 'lb', value: '1' },
-    { label: 'kg', value: '2' },
-    { label: 'g', value: '3' },
-    { label: 'piece', value: '4' }
+    { label: 'hr', value: '1' },
+    { label: 'week', value: '2' },
+    { label: 'month', value: '3' }
   ]
-  let selectedProductType: any = null;
+  let selectedJobType: any = null;
   let selectedUnitType: any = null;
 
-  let productObj = {
-    'name': '',
+  let jobObj = {
     'type': '',
-    'description': '',
-    'quantity': '',
-    'unitType': '',
-    'price': ''
+    'title': '',
+    'desc': '',
+    'salary': '',
+    'timeUnit': ''
   };
 
 
@@ -56,9 +48,9 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   }, [render]);
 
   const getProducts = () => {
-    axios.get("https://nodejs-ifarmo.herokuapp.com/api/products")
+    axios.get("https://nodejs-ifarmo.herokuapp.com/api/jobs")
       .then(res => {
-        console.log("GET PRODUCTS");
+        console.log("GET JOBS");
         setItemArray(res.data);
       })
       .catch(err => {

@@ -17,7 +17,7 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
   const [productName, setProductName] = useState('');
   const [render, setRender] = useState(false);
 
-  const productTypes = [
+  const equipmentTypes = [
     { label: 'Tools', value: '1' },
     { label: 'Heavy Machinery', value: '2' },
     { label: 'Vehicles', value: '3' },
@@ -26,16 +26,15 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
   const unitTypes = [
     { label: 'piece', value: '1' }
   ]
-  let selectedProductType: any = null;
+  let selectedEquipmentType: any = null;
   let selectedUnitType: any = null;
 
-  let productObj = {
-    'name': '',
-    'type': '',
-    'description': '',
-    'quantity': '',
-    'unitType': '',
-    'price': ''
+  let equipmentObj = {
+    'title': '',
+    'desc': '',
+    'price': '',
+    'datePosted': '',
+    'postedBy': ''
   };
 
 
@@ -43,14 +42,14 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
   type SearchBarComponentProps = {};
 
   useEffect(() => {
-    getProducts();
+    getEquipment();
 
   }, [render]);
 
-  const getProducts = () => {
-    axios.get("https://nodejs-ifarmo.herokuapp.com/api/products")
+  const getEquipment = () => {
+    axios.get("https://nodejs-ifarmo.herokuapp.com/api/equipment")
       .then(res => {
-        console.log("GET PRODUCTS");
+        console.log("GET EQUIPMENT");
         setItemArray(res.data);
       })
       .catch(err => {
@@ -63,12 +62,12 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
     let token: any = await AsyncStorage.getItem("auth-token");
     console.log("token: ", JSON.stringify(token));
 
-    axios.post('https://nodejs-ifarmo.herokuapp.com/api/products', productObj, {
+    axios.post('https://nodejs-ifarmo.herokuapp.com/api/equipment', equipmentObj, {
       headers: {
         'auth-token': token
       }
     }).then(res => {
-      console.log("postProduct() res: ", res);
+      console.log("postEquipment() res: ", res);
       setRender(true);
       setOverlayVisible(false);
     }).catch(err => {
@@ -91,26 +90,26 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
         >
           {/* Add Item Form */}
 
-          <Input placeholder="Product Name" onChangeText={(value) => productObj.name = value} />
+          <Input placeholder="Equipment Name" onChangeText={(value) => equipmentObj.title = value} />
           {/* <Text style={styles.dropdownLabel}>Product Type</Text> */}
           <Dropdown
             style={styles.dropdown}
             placeholderStyle={styles.placeholder}
-            data={productTypes}
+            data={equipmentTypes}
             labelField='label'
             valueField='value'
-            value={productObj.type}
-            placeholder={'Select Product Type'}
+            value={equipmentObj.type}
+            placeholder={'Select Equipment Type'}
             onChange={item => {
-              productObj.type = item.label;
+              equipmentObj.type = item.label;
             }}
           />
           <Input placeholder='Description'
-            onChangeText={(value) => productObj.description = value}
+            onChangeText={(value) => equipmentObj.desc = value}
             style={{ marginTop: 15 }}
           />
           <Input placeholder='Quantity'
-            onChangeText={(value) => productObj.quantity = value}
+            onChangeText={(value) => equipmentObj.quantity = value}
             style={{ marginTop: 10 }}
           />
           <Dropdown
@@ -119,14 +118,14 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
             data={unitTypes}
             labelField='label'
             valueField='value'
-            value={productObj.unitType}
+            value={equipmentObj.unitType}
             placeholder={'Select Unit Type'}
             onChange={item => {
-              productObj.unitType = item.label;
+              equipmentObj.unitType = item.label;
             }}
           />
           <Input placeholder='Price'
-            onChangeText={(value) => productObj.price = value}
+            onChangeText={(value) => equipmentObj.price = value}
             style={{ marginTop: 15 }} />
 
           <Button title='Add Product'
