@@ -24,7 +24,7 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
     { label: 'Other', value: '4' },
   ];
   const unitTypes = [
-    { label: 'piece', value: '1' }
+    { label: 'units', value: '1' }
   ]
   let selectedEquipmentType: any = null;
   let selectedUnitType: any = null;
@@ -33,8 +33,9 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
     'title': '',
     'desc': '',
     'price': '',
-    'datePosted': '',
-    'postedBy': ''
+    'type': '',
+    'quantity': '',
+    'unitType': ''
   };
 
 
@@ -58,7 +59,7 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
       });
   }
 
-  const postProduct = async () => {
+  const postEquipment = async () => {
     let token: any = await AsyncStorage.getItem("auth-token");
     console.log("token: ", JSON.stringify(token));
 
@@ -128,11 +129,11 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
             onChangeText={(value) => equipmentObj.price = value}
             style={{ marginTop: 15 }} />
 
-          <Button title='Add Product'
+          <Button title='Add Equipment'
             // color='black'
-            style={styles.addProductBtn}
+            style={styles.addEquipmentBtn}
             onPress={() => {
-              postProduct();
+              postEquipment();
             }}
           />
 
@@ -275,7 +276,7 @@ const styles = StyleSheet.create({
   placeholder: {
     color: 'grey'
   },
-  addProductBtn: {
+  addEquipmentBtn: {
     marginTop: 35
   }
 });

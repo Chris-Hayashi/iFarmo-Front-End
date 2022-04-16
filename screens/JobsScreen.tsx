@@ -142,7 +142,7 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
     );
   }
 
-  const viewJobOverlay = () => {
+  const viewProductOverlay = () => {
 
   }
 
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   placeholder: {
     color: 'grey'
   },
-  addProductBtn: {
+  addJobBtn: {
     marginTop: 35
   }
 });
