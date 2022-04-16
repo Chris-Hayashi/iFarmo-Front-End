@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme, NavigationHelpersContext } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -52,7 +52,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   return (
-    <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName='Home' screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Home" component={BottomTabNavigator} />
@@ -109,7 +109,7 @@ function BottomTabNavigator({ navigation }: RootTabScreenProps<'HomeTab'>) {
         component={ProduceScreen}
         options={{
           title: 'Produce',
-          tabBarIcon: ({ color }) => <TabBarIcon name="shopping-cart" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="seedling" color={color} />,
         }}
       />
       <BottomTab.Screen
@@ -125,7 +125,7 @@ function BottomTabNavigator({ navigation }: RootTabScreenProps<'HomeTab'>) {
         component={EquipmentScreen}
         options={{
           title: 'Equipment',
-          tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="tractor" color={color} />,
         }}
       />
     </BottomTab.Navigator>
@@ -136,10 +136,10 @@ function BottomTabNavigator({ navigation }: RootTabScreenProps<'HomeTab'>) {
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
+  name: React.ComponentProps<typeof FontAwesome5>['name'];
   color: string;
 }) {
-  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
+  return <FontAwesome5 size={30} style={{ marginBottom: -3 }} {...props} />;
 }
 
 function Header(props: any) {
