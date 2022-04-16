@@ -35,7 +35,7 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
     'title': '',
     'desc': '',
     'salary': '',
-    'timeUnit': ''
+    'timeUnit': '',
   };
 
 
@@ -43,11 +43,11 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   type SearchBarComponentProps = {};
 
   useEffect(() => {
-    getProducts();
+    getJobs();
 
   }, [render]);
 
-  const getProducts = () => {
+  const getJobs = () => {
     axios.get("https://nodejs-ifarmo.herokuapp.com/api/jobs")
       .then(res => {
         console.log("GET JOBS");
@@ -59,16 +59,16 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
       });
   }
 
-  const postProduct = async () => {
+  const postJob = async () => {
     let token: any = await AsyncStorage.getItem("auth-token");
     console.log("token: ", JSON.stringify(token));
 
-    axios.post('https://nodejs-ifarmo.herokuapp.com/api/products', productObj, {
+    axios.post('https://nodejs-ifarmo.herokuapp.com/api/jobs', jobObj, {
       headers: {
         'auth-token': token
       }
     }).then(res => {
-      console.log("postProduct() res: ", res);
+      console.log("postJob() res: ", res);
       setRender(true);
       setOverlayVisible(false);
     }).catch(err => {
@@ -91,26 +91,26 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
         >
           {/* Add Item Form */}
 
-          <Input placeholder="Product Name" onChangeText={(value) => productObj.name = value} />
+          <Input placeholder="Job Title" onChangeText={(value) => jobObj.title = value} />
           {/* <Text style={styles.dropdownLabel}>Product Type</Text> */}
           <Dropdown
             style={styles.dropdown}
             placeholderStyle={styles.placeholder}
-            data={productTypes}
+            data={jobTypes}
             labelField='label'
             valueField='value'
-            value={productObj.type}
+            value={jobObj.type}
             placeholder={'Select Product Type'}
             onChange={item => {
-              productObj.type = item.label;
+              jobObj.type = item.label;
             }}
           />
           <Input placeholder='Description'
-            onChangeText={(value) => productObj.description = value}
+            onChangeText={(value) => jobObj.desc = value}
             style={{ marginTop: 15 }}
           />
-          <Input placeholder='Quantity'
-            onChangeText={(value) => productObj.quantity = value}
+          <Input placeholder='Salary'
+            onChangeText={(value) => jobObj.salary = value}
             style={{ marginTop: 10 }}
           />
           <Dropdown
@@ -119,21 +119,21 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
             data={unitTypes}
             labelField='label'
             valueField='value'
-            value={productObj.unitType}
+            value={jobObj.timeUnit}
             placeholder={'Select Unit Type'}
             onChange={item => {
-              productObj.unitType = item.label;
+              jobObj.timeUnit = item.label;
             }}
           />
-          <Input placeholder='Price'
-            onChangeText={(value) => productObj.price = value}
+          <Input placeholder='Salary'
+            onChangeText={(value) => jobObj.salary = value}
             style={{ marginTop: 15 }} />
 
-          <Button title='Add Product'
+          <Button title='Add Job'
             // color='black'
-            style={styles.addProductBtn}
+            style={styles.addJobBtn}
             onPress={() => {
-              postProduct();
+              postJob();
             }}
           />
 
@@ -142,7 +142,7 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
     );
   }
 
-  const viewProductOverlay = () => {
+  const viewJobOverlay = () => {
 
   }
 
