@@ -15,17 +15,13 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 
 /* Screens */
-import ModalScreen from '../screens/ModalScreen';
-import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import ProduceScreen from '../screens/ProduceScreen';
 import JobsScreen from '../screens/JobsScreen';
 import EquipmentScreen from '../screens/EquipmentScreen';
-import UserProfile from '../screens/UserProfile';
-import EditProfile from '../screens/EditProfile';
+import UserProfileScreen from '../screens/UserProfileScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -52,12 +48,12 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   return (
-    <Stack.Navigator initialRouteName='Home' screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Home" component={BottomTabNavigator} />
-      <Stack.Screen name="UserProfile" component={UserProfile} />
-      <Stack.Screen name="EditProfile" component={EditProfile} />
+      <Stack.Screen name="UserProfile" component={UserProfileScreen} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
     </Stack.Navigator>
   );
 }
