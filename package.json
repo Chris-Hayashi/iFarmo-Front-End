@@ -35,6 +35,7 @@
     "react-native": "0.64.3",
     "react-native-element-dropdown": "^1.8.2",
     "react-native-elements": "^3.4.2",
+    "react-native-paper": "^4.12.0",
     "react-native-platform-searchbar": "^1.2.3",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1",
