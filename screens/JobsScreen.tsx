@@ -47,8 +47,8 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
 
   }, [render]);
 
-  const getJobs = () => {
-    axios.get("https://nodejs-ifarmo.herokuapp.com/api/jobs")
+  const getJobs = async () => {
+    await axios.get("https://nodejs-ifarmo.herokuapp.com/api/jobs")
       .then(res => {
         console.log("GET JOBS");
         setItemArray(res.data);
