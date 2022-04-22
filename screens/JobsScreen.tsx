@@ -7,6 +7,7 @@ import SearchBar from 'react-native-platform-searchbar';
 import { Text, View } from '../components/Themed';
 import { RootStackScreenProps } from '../types';
 import axios from 'axios';
+import Grid from '../components/Grid';
 
 export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>) {
 
@@ -146,45 +147,39 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
 
   }
 
-  const Grid = ({ items }: any) => {
-    return (
-      <View style={styles.grid}>
-        <FlatList
-          data={items}
-          renderItem={({ item, index }) => (
-            <Card containerStyle={styles.gridCard}>
+  // const Grid = ({ items }: any) => {
+  //   return (
+  //     <View style={styles.grid}>
+  //       <FlatList
+  //         data={items}
+  //         renderItem={({ item, index }) => (
+  //           <Card containerStyle={styles.gridCard}>
 
-              {/* Card Content */}
-              {/* <Text style={styles.itemUserPosted}>{item.userPosted}</Text> */}
-              <Card.Image
-                style={{ padding: 0 }}
-                source={{
-                  uri:
-                    'https://awildgeographer.files.wordpress.com/2015/02/john_muir_glacier.jpg',
-                }}
-              />
-              <Card.Divider />
-              <Card.Title style={styles.itemName}>{item.name}</Card.Title>
-              <Text style={styles.itemPrice}>${item.price} / {item.unitType}</Text>
-              {/* <Text style={styles.itemDistance}>{item.distance}</Text> */}
+  //             {/* Card Content */}
+  //             {/* <Text style={styles.itemUserPosted}>{item.userPosted}</Text> */}
+  //             <Card.Image
+  //               style={{ padding: 0 }}
+  //               source={{
+  //                 uri:
+  //                   'https://awildgeographer.files.wordpress.com/2015/02/john_muir_glacier.jpg',
+  //               }}
+  //             />
+  //             <Card.Divider />
+  //             <Card.Title style={styles.itemName}>{item.name}</Card.Title>
+  //             <Text style={styles.itemPrice}>${item.price} / {item.unitType}</Text>
+  //             {/* <Text style={styles.itemDistance}>{item.distance}</Text> */}
 
-            </Card>
-          )}
-          numColumns={2}
-          keyExtractor={(item, index) => index.toString()}
-        />
+  //           </Card>
+  //         )}
+  //         numColumns={2}
+  //         keyExtractor={(item, index) => index.toString()}
+  //       />
 
 
-      </View>
-    );
-  };
+  //     </View>
+  //   );
+  // };
 
-  // const SwitchComponent: React.FunctionComponent<SearchBarComponentProps> = () => {
-  //   const [search, setSearch] = useState("");
-
-  // const updateSearch = (search: any) => {
-  //   setSearch(search);
-  // }
   return (
     <View style={[styles.container]}>
       <SearchBar
