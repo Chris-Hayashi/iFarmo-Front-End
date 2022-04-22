@@ -1,14 +1,8 @@
-import { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, Dimensions, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
-import { Card, FAB, Input, Overlay, Button, Text, Icon } from 'react-native-elements';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { Input, Overlay, Button } from 'react-native-elements';
 import { Dropdown } from 'react-native-element-dropdown';
-import SearchBar from 'react-native-platform-searchbar';
 import { View } from '../components/Themed';
-import { RootStackScreenProps } from '../types';
-import axios from 'axios';
-import { addEventListener } from 'expo-linking';
-import Grid from '../components/Grid';
 
 const AddItemOverlay = ({ postItem, isVisible, onBackdropPressHandler }: any) => {
     const [overlayVisible, setOverlayVisible] = useState(false);
