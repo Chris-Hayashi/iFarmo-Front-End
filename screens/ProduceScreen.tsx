@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, Dimensions, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { FAB, Icon } from 'react-native-elements';
 import { IconButton, Menu, Divider, Provider } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Dropdown } from 'react-native-element-dropdown';
 import SearchBar from 'react-native-platform-searchbar';
-import { View } from '../components/Themed';
+// import { View } from '../components/Themed';
 import { RootStackScreenProps } from '../types';
 import axios from 'axios';
-import { addEventListener } from 'expo-linking';
 import Grid from '../components/Grid';
 import AddItemOverlay from '../components/AddItemOverlay'
 
@@ -89,7 +87,7 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
             onDismiss={() => setFilterVisible(false)}
             style={styles.menu}
             anchor={
-              <IconButton icon='filter' style={styles.filterIcon} onPress={() => setFilterVisible(true)} />
+              <IconButton icon='filter' size={25} style={styles.filterIcon} onPress={() => setFilterVisible(true)} />
             }
           >
             <Menu.Item
@@ -97,14 +95,14 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
                 setFilter('by_date');
                 setFilterVisible(false);
               }}
-            title="Sort by date" 
+              title="Sort by date"
             />
-            <Menu.Item 
-            onPress={() => {
-              setFilter('by_price');
-              setFilterVisible(false);
-            }}
-            title="Sort by price" />
+            <Menu.Item
+              onPress={() => {
+                setFilter('by_price');
+                setFilterVisible(false);
+              }}
+              title="Sort by price" />
           </Menu>
           {/* </View> */}
         </View>
@@ -130,8 +128,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 25,
-    padding: 5
+    // marginTop: 25,
+    padding: 5,
+    paddingTop: 35
   },
   fab: {
     position: 'absolute',
@@ -140,12 +139,14 @@ const styles = StyleSheet.create({
   },
   filterIcon: {
     flex: 1,
-    justifyContent: 'center',
-    marginHorizontal: 10,
+    justifyContent: 'space-between',
+    // alignItems: 'center',
+    marginHorizontal: 10
   },
   searchBar: {
     flex: 1,
-    marginLeft: 10
+    marginLeft: 10,
+    marginBottom: 10
   },
   menu: {
     top: 60

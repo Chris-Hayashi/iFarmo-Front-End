@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, FlatList, TouchableOpacity, View } from 'react-native';
 import { Card, Text } from 'react-native-elements';
-import { View } from '../components/Themed';
+// import { View } from '../components/Themed';
 import ItemDescOverlay from './ItemDescOverlay';
 
 const Grid = ({ items }: any) => {
@@ -38,7 +38,7 @@ const Grid = ({ items }: any) => {
             <FlatList
                 data={items}
                 renderItem={({ item, index }) => (
-                    <Card containerStyle={styles.gridCard}>
+                    <Card containerStyle={styles.card}>
                         <ItemDescOverlay
                             item={items[itemIndex]}
                             itemImage={getItemImage(items[itemIndex].type)}
@@ -49,17 +49,19 @@ const Grid = ({ items }: any) => {
                             onPress={() => {
                                 setOverlayVisible(!overlayVisible)
                                 setItemIndex(index);
-                            }}>
+                            }}
+                        >
                             <Card.Image
-                                style={{ padding: 0 }}
+                                style={styles.image}
                                 source={
-                                    getItemImage(item.type)
+                                    item.imagePath ? { uri: item.imagePath } : getItemImage(item.type)
                                 }
                             />
                             <Card.Divider />
 
-                            <Card.Title style={styles.itemName}>{item.name}</Card.Title>
-                            <Text style={styles.itemPrice}>${item.price} / {item.unitType}</Text>
+                            <Card.Title style={[styles.itemName]}>{item.name}</Card.Title>
+                            <Text style={[styles.itemPrice]}>${item.price} / {item.unitType}</Text>
+                            <Text style={[styles.itemCity]}>{item.city}</Text>
                         </TouchableOpacity>
                     </Card>
                 )}
@@ -72,16 +74,33 @@ const Grid = ({ items }: any) => {
 
 const styles = StyleSheet.create({
     grid: {
-        flexDirection: "row"
+        flexDirection: "row",
+        paddingTop: 0,
     },
-    gridCard: {
-        flex: 3
+    card: {
+        flex: 1,
+        padding: 10,
+        marginHorizontal: 10,
+        // justifyContent: 'center'
+    },
+    image: {
+        borderRadius: 10,
+        padding: 0,
+        margin: 0,
     },
     itemName: {
-        textAlign: 'left'
+        textAlign: 'left',
+        padding: 0,
+        lineHeight: 14,
     },
     itemPrice: {
-        textAlign: 'right'
+        textAlign: 'left',
+        padding: 0,
+        lineHeight: 14
+    },
+    itemCity: {
+        textAlign: 'right',
+        color: 'grey'
     },
     overlay: {
         width: '80%',
@@ -90,22 +109,7 @@ const styles = StyleSheet.create({
         maxHeight: 600,
         padding: 25,
         elevation: 0
-    },
-    prodName: {
-        textAlign: 'center'
-    },
-    prodMargin: {
-        marginTop: 25,
-        marginBottom: 10
-    },
-    prodImage: {
-        // alignItems: 'center',
-        maxWidth: 200,
-        maxHeight: 200,
-        marginTop: 20,
-        marginLeft: 'auto',
-        marginRight: 'auto'
-    },
+    }
 });
 
 export default Grid;
