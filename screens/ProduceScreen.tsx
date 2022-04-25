@@ -24,19 +24,11 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
 
   useEffect(() => {
     getProducts();
-    console.log("useEffect() executed");
-
   }, [render, search, filter]);
 
-
-  /* search and filter function */
-  /* filter values: by_date by_price*/
   const getProducts = async () => {
     await axios.get(`https://nodejs-ifarmo.herokuapp.com/api/products?searchKey=${search}&filter=${filter}`)
       .then(res => {
-        console.log("GET PRODUCTS");
-        // if (search != '')
-        // console.log("res.data: ", res.data);
         setItemArray(res.data);
       })
       .catch(err => {
@@ -69,7 +61,7 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   return (
     <Provider>
       <View style={[styles.container]}>
-        <View style={{ display: 'flex', flexDirection: 'row' }}>
+        <View style={{ display: 'flex', flexDirection: 'row', marginBottom: 0 }}>
           <SearchBar
             placeholder='Search'
             onChangeText={(val) => {
@@ -81,7 +73,6 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
             theme='light'
             style={styles.searchBar}
           />
-          {/* <View style={{paddingTop: 50}}> */}
           <Menu
             visible={filterVisible}
             onDismiss={() => setFilterVisible(false)}
@@ -104,10 +95,9 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
               }}
               title="Sort by price" />
           </Menu>
-          {/* </View> */}
         </View>
 
-        <Grid items={itemArray} />
+        <Grid items={itemArray} type='products' />
         <FAB
           visible={fabVisible}
           icon={{ name: 'add', color: 'white' }}
@@ -115,8 +105,11 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
           onPress={toggleAddItemOverlay}
           style={styles.fab}
         />
-        {/* <AddItemOverlay /> */}
-        <AddItemOverlay isVisible={overlayVisible} postItem={postProduct} onBackdropPressHandler={toggleAddItemOverlay} />
+        <AddItemOverlay
+          isVisible={overlayVisible}
+          postItem={postProduct}
+          onBackdropPressHandler={toggleAddItemOverlay}
+        />
 
       </View>
     </Provider>
@@ -130,7 +123,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     // marginTop: 25,
     padding: 5,
-    paddingTop: 35
+    paddingTop: 15
   },
   fab: {
     position: 'absolute',

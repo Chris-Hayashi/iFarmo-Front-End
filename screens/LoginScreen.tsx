@@ -1,7 +1,5 @@
 import { StyleSheet, TextInput } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 import { RootStackScreenProps } from "../types";
 import { Input, Button } from "react-native-elements";
@@ -41,7 +39,7 @@ export default function LoginScreen({
 
   const getAuthToken = async () => {
     const token = await AsyncStorage.getItem("auth-token");
-    // console.log("localStorage token: ", token);
+    console.log("localStorage token: ", token);
   };
 
   const signUpBtnHandler = () => {
