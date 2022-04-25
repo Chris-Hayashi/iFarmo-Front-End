@@ -1,20 +1,22 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, Dimensions } from 'react-native';
-import { Card, FAB, Input, Overlay, Button } from 'react-native-elements';
+import { StyleSheet, View } from 'react-native';
+import { FAB } from 'react-native-elements';
+import { IconButton, Menu, Provider } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Dropdown } from 'react-native-element-dropdown';
 import SearchBar from 'react-native-platform-searchbar';
-import { Text, View } from '../components/Themed';
 import { RootStackScreenProps } from '../types';
 import axios from 'axios';
 import Grid from '../components/Grid';
+import AddItemOverlay from '../components/AddItemOverlay';
 
 export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>) {
 
   const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
   const [itemArray, setItemArray] = useState([]);
   const [fabVisible, setFabVisible] = useState(true);
   const [overlayVisible, setOverlayVisible] = useState(false);
+  const [filterVisible, setFilterVisible] = useState(false);
   const [productName, setProductName] = useState('');
   const [render, setRender] = useState(false);
 
@@ -46,10 +48,10 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   useEffect(() => {
     getJobs();
 
-  }, [render]);
+  }, [render, search, filter]);
 
   const getJobs = async () => {
-    await axios.get("https://nodejs-ifarmo.herokuapp.com/api/jobs")
+    await axios.get(`https://nodejs-ifarmo.herokuapp.com/api/jobs?searchKey=${search}&filter=${filter}`)
       .then(res => {
         console.log("GET JOBS");
         setItemArray(res.data);
@@ -78,128 +80,66 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
     });
   }
 
-  const toggleOverlay = () => {
+  const toggleAddItemOverlay = () => {
     setOverlayVisible(!overlayVisible);
   }
 
-  const AddItemOverlay = () => {
-    return (
-      <View>
-        <Overlay
-          isVisible={overlayVisible}
-          onBackdropPress={toggleOverlay}
-          overlayStyle={styles.overlay}
-        >
-          {/* Add Item Form */}
-
-          <Input placeholder="Job Title" onChangeText={(value) => jobObj.title = value} />
-          {/* <Text style={styles.dropdownLabel}>Product Type</Text> */}
-          <Dropdown
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholder}
-            data={jobTypes}
-            labelField='label'
-            valueField='value'
-            value={jobObj.type}
-            placeholder={'Select Product Type'}
-            onChange={item => {
-              jobObj.type = item.label;
-            }}
-          />
-          <Input placeholder='Description'
-            onChangeText={(value) => jobObj.desc = value}
-            style={{ marginTop: 15 }}
-          />
-          <Input placeholder='Salary'
-            onChangeText={(value) => jobObj.salary = value}
-            style={{ marginTop: 10 }}
-          />
-          <Dropdown
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholder}
-            data={unitTypes}
-            labelField='label'
-            valueField='value'
-            value={jobObj.timeUnit}
-            placeholder={'Select Unit Type'}
-            onChange={item => {
-              jobObj.timeUnit = item.label;
-            }}
-          />
-          <Input placeholder='Salary'
-            onChangeText={(value) => jobObj.salary = value}
-            style={{ marginTop: 15 }} />
-
-          <Button title='Add Job'
-            // color='black'
-            style={styles.addJobBtn}
-            onPress={() => {
-              postJob();
-            }}
-          />
-
-        </Overlay>
-      </View>
-    );
-  }
-
-  const viewProductOverlay = () => {
-
-  }
-
-  // const Grid = ({ items }: any) => {
-  //   return (
-  //     <View style={styles.grid}>
-  //       <FlatList
-  //         data={items}
-  //         renderItem={({ item, index }) => (
-  //           <Card containerStyle={styles.gridCard}>
-
-  //             {/* Card Content */}
-  //             {/* <Text style={styles.itemUserPosted}>{item.userPosted}</Text> */}
-  //             <Card.Image
-  //               style={{ padding: 0 }}
-  //               source={{
-  //                 uri:
-  //                   'https://awildgeographer.files.wordpress.com/2015/02/john_muir_glacier.jpg',
-  //               }}
-  //             />
-  //             <Card.Divider />
-  //             <Card.Title style={styles.itemName}>{item.name}</Card.Title>
-  //             <Text style={styles.itemPrice}>${item.price} / {item.unitType}</Text>
-  //             {/* <Text style={styles.itemDistance}>{item.distance}</Text> */}
-
-  //           </Card>
-  //         )}
-  //         numColumns={2}
-  //         keyExtractor={(item, index) => index.toString()}
-  //       />
-
-
-  //     </View>
-  //   );
-  // };
-
   return (
-    <View style={[styles.container]}>
-      <SearchBar
-        placeholder='Search'
-        onChangeText={setSearch}
-        value={search}
-        platform='ios'
-        theme='light'
-      />
-      <Grid items={itemArray} />
-      <FAB
-        visible={fabVisible}
-        icon={{ name: 'add', color: 'white' }}
-        color="green"
-        onPress={toggleOverlay}
-        style={styles.fab}
-      />
-      <AddItemOverlay />
+    <Provider>
+      <View style={[styles.container]}>
+        <View style={{ display: 'flex', flexDirection: 'row', marginBottom: 0 }}>
+          <SearchBar
+            placeholder='Search'
+            // autoCapitalize={'none'}
+            onChangeText={(val) => {
+              setSearch(val);
+              // getProducts();
+            }}
+            value={search}
+            platform='ios'
+            theme='light'
+            style={styles.searchBar}
+          />
+          <Menu
+            visible={filterVisible}
+            onDismiss={() => setFilterVisible(false)}
+            style={styles.menu}
+            anchor={
+              <IconButton icon='filter' size={25} style={styles.filterIcon} onPress={() => setFilterVisible(true)} />
+            }
+          >
+            <Menu.Item
+              onPress={() => {
+                setFilter('');
+                setFilterVisible(false);
+              }}
+              title="All jobs" />
+            <Menu.Item
+              onPress={() => {
+                setFilter('farmer');
+                setFilterVisible(false);
+              }}
+              title="I am job searching" />
+            <Menu.Item
+              onPress={() => {
+                setFilter('worker');
+                setFilterVisible(false);
+              }}
+              title="I am hiring" />
+          </Menu>
+        </View>
+        <Grid items={itemArray} type='jobs' />
+        <FAB
+          visible={fabVisible}
+          icon={{ name: 'add', color: 'white' }}
+          color="green"
+          onPress={toggleAddItemOverlay}
+          style={styles.fab}
+        />
+        <AddItemOverlay isVisible={overlayVisible} postItem={postJob} onBackdropPressHandler={toggleAddItemOverlay} />
 
-    </View>
+      </View>
+    </Provider>
   );
 };
 
@@ -208,70 +148,25 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 25,
-    padding: 5
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold'
-  },
-  separator: {
-    height: 1,
-    width: '80%',
-    color: 'black'
-  },
-  grid: {
-    flexDirection: "row"
-  },
-  gridCard: {
-    flex: 3
-  },
-  itemUserPosted: {
-    paddingBottom: 5
-  },
-  itemName: {
-    textAlign: 'left'
-  },
-  itemPrice: {
-    textAlign: 'right'
-  },
-  itemDistance: {
-    textAlign: 'right'
+    padding: 5,
+    paddingTop: 15
   },
   fab: {
     position: 'absolute',
     bottom: 20,
     right: 25
   },
-  overlay: {
-    width: '80%',
-    height: '60%',
-    maxWidth: 500,
-    maxHeight: 600,
-    padding: 25,
-    elevation: 0
+  filterIcon: {
+    flex: 1,
+    justifyContent: 'space-between',
+    marginHorizontal: 10
   },
-  dropdown: {
-    height: 50,
-    borderColor: 'white',
-    borderBottomColor: 'black',
-    borderBottomStartRadius: 0,
-    borderBottomEndRadius: 0,
-    borderWidth: 0.5,
-    borderRadius: 8,
-    width: '95%',
-    left: 10,
-    bottom: 8
-  },
-  dropdownLabel: {
+  searchBar: {
+    flex: 1,
     marginLeft: 10,
-    marginBottom: 5,
-    fontSize: 16
+    marginBottom: 10
   },
-  placeholder: {
-    color: 'grey'
-  },
-  addJobBtn: {
-    marginTop: 35
+  menu: {
+    top: 60
   }
 });
