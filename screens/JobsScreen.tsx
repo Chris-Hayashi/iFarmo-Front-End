@@ -17,7 +17,6 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   const [fabVisible, setFabVisible] = useState(true);
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
-  const [productName, setProductName] = useState('');
   const [render, setRender] = useState(false);
 
   const jobTypes = [
@@ -33,13 +32,13 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   let selectedJobType: any = null;
   let selectedUnitType: any = null;
 
-  let jobObj = {
-    'type': '',
-    'title': '',
-    'desc': '',
-    'salary': '',
-    'timeUnit': '',
-  };
+  // let jobObj = {
+  //   'type': '',
+  //   'title': '',
+  //   'desc': '',
+  //   'salary': '',
+  //   'timeUnit': '',
+  // };
 
 
   type OverlayComponentProps = {};
@@ -62,11 +61,11 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
       });
   }
 
-  const postJob = async () => {
+  const postJob = async (job : any) => {
     let token: any = await AsyncStorage.getItem("auth-token");
     console.log("token: ", JSON.stringify(token));
 
-    axios.post('https://nodejs-ifarmo.herokuapp.com/api/jobs', jobObj, {
+    axios.post('https://nodejs-ifarmo.herokuapp.com/api/jobs', job, {
       headers: {
         'auth-token': token
       }
@@ -136,7 +135,12 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
           onPress={toggleAddItemOverlay}
           style={styles.fab}
         />
-        <AddItemOverlay isVisible={overlayVisible} postItem={postJob} onBackdropPressHandler={toggleAddItemOverlay} />
+        <AddItemOverlay
+          isVisible={overlayVisible}
+          postItem={postJob}
+          onBackdropPressHandler={toggleAddItemOverlay}
+          type='job'
+        />
 
       </View>
     </Provider>

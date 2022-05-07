@@ -4,6 +4,7 @@ import { FAB, Icon } from 'react-native-elements';
 import { IconButton, Menu, Divider, Provider } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SearchBar from 'react-native-platform-searchbar';
+import jwt_decode from "jwt-decode";
 // import { View } from '../components/Themed';
 import { RootStackScreenProps } from '../types';
 import axios from 'axios';
@@ -11,8 +12,9 @@ import Grid from '../components/Grid';
 import AddItemOverlay from '../components/AddItemOverlay'
 
 export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>) {
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("");
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('');
+  const [role, setRole] = useState('');
   const [itemArray, setItemArray] = useState([]);
   const [fabVisible, setFabVisible] = useState(true);
   const [overlayVisible, setOverlayVisible] = useState(false);
@@ -23,8 +25,41 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   type SearchBarComponentProps = {};
 
   useEffect(() => {
+    getUserRole();
     getProducts();
   }, [render, search, filter]);
+
+  const getUserId = async () => {
+    var userId = ""
+    try {
+      const token = await AsyncStorage.getItem('auth-token');
+      if (token != null) {
+        var decoded_token: { _id: string } = jwt_decode(token);
+        // console.log("decoded token: ", decoded_token);
+        userId = decoded_token._id;
+      }
+    }
+    catch (e) {
+      console.log("damn it");
+    }
+    return userId;
+  }
+
+  //get user information
+  const getUserRole = async () => {
+    const userId = await getUserId();
+
+    axios.get('https://nodejs-ifarmo.herokuapp.com/api/users/' + userId)
+      .then(res => {
+        // not sure how to get this to work @CHRIS
+        setRole(res.data.role);
+      })
+      .catch(err => {
+        alert(err.response.request._response);
+        console.log(err.response.request._response);
+      });
+  }
+
 
   const getProducts = async () => {
     await axios.get(`https://nodejs-ifarmo.herokuapp.com/api/products?searchKey=${search}&filter=${filter}`)
@@ -98,18 +133,24 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
         </View>
 
         <Grid items={itemArray} type='products' />
-        <FAB
-          visible={fabVisible}
-          icon={{ name: 'add', color: 'white' }}
-          color="green"
-          onPress={toggleAddItemOverlay}
-          style={styles.fab}
-        />
+        {role === 'farmer'
+
+          ? <FAB
+            visible={fabVisible}
+            icon={{ name: 'add', color: 'white' }}
+            color="green"
+            onPress={toggleAddItemOverlay}
+            style={styles.fab}
+          />
+          : <View></View>
+        }
         <AddItemOverlay
           isVisible={overlayVisible}
           postItem={postProduct}
           onBackdropPressHandler={toggleAddItemOverlay}
+          type='product'
         />
+
 
       </View>
     </Provider>

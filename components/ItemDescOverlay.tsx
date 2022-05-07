@@ -34,7 +34,6 @@ const ItemDescOverlay = ({ item, itemImage, isVisible, onBackdropPressHandler, t
                 userId = decoded_token._id;
                 setUserId(userId);
             }
-            // setUserId(userId);
         }
         catch (e) {
             console.log("damn it");
@@ -45,6 +44,17 @@ const ItemDescOverlay = ({ item, itemImage, isVisible, onBackdropPressHandler, t
     const isSameUser = async (postedUserId: string) => {
         const userId: string = await getUserId();
         return postedUserId === userId;
+    }
+
+    const EquipmentType = ({ type, style }: any) => {
+        if (type === 'Tools')
+            return <Text style={[style, { color: 'green', marginBottom: 5 }]}>Tools</Text>
+        else if (type === 'Machinery')
+            return <Text style={[style, { color: 'blue', marginBottom: 5 }]}>Machinery</Text>
+        else if (type === 'Materials')
+            return <Text style={[style, { color: 'red', marginBottom: 5 }]}>Materials</Text>
+        else
+            return <Text style={[style, { color: 'grey', marginBottom: 5 }]}>Other</Text>
     }
 
     const ItemDesc = () => {
@@ -100,7 +110,7 @@ const ItemDescOverlay = ({ item, itemImage, isVisible, onBackdropPressHandler, t
                     }
                     <Text style={styles.itemName}>{item.title}</Text>
                     <View style={{ flexDirection: 'row', marginVertical: 5, alignItems: 'center' }}>
-                        <Text style={styles.jobType}>{item.type}</Text>
+                        <Text style={styles.itemType}>{item.type}</Text>
                         <Text style={styles.itemCity}>{item.city}</Text>
                     </View>
 
@@ -138,8 +148,53 @@ const ItemDescOverlay = ({ item, itemImage, isVisible, onBackdropPressHandler, t
 
                 </View>
             );
-        else
-            return <View></View>;
+        else // EQUIPMENT
+            return (
+                <View>
+                    <Image 
+                        source={item.imagePath ? { uri: item.imagePath } : itemImage}
+                        style={styles.itemImage}
+                    />
+                    <Text style={styles.itemName}>{item.title}</Text>
+                    <View style={{ flexDirection: 'row', marginVertical: 5, alignItems: 'center' }}>
+                        <EquipmentType style={styles.itemType} type={item.type} />
+                        <Text style={styles.itemCity}>{item.city}</Text>
+                    </View>
+
+                    <View style={{ flexDirection: 'row', marginBottom: 10, alignItems: 'center' }}>
+                        <Text style={styles.itemPrice}>${item.price} / {item.unitType}</Text>
+                        <Text style={styles.itemDatePosted}>{convertDate(item.datePosted)}</Text>
+                    </View>
+
+                    <Text style={styles.itemDesc}>{item.description}</Text>
+
+                    <Divider color='black' style={styles.divider} />
+
+                    <View style={{ flexDirection: 'row', marginBottom: 7 }}>
+                        {item.postedBy.role === 'farmer'
+                            ? <Text>Employer Name: </Text>
+                            : <Text>Worker Name: </Text>
+                        }
+                        <Text style={styles.personName}>{item.postedBy.name}</Text>
+                    </View>
+
+                    <View style={{ flexDirection: 'row', marginBottom: 7 }}>
+                        <Text>Phone Number: </Text>
+                        <Text style={styles.personPhone}>{item.postedBy.contactInfo}</Text>
+                    </View>
+
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text>Email:</Text>
+                        <Text
+                            style={styles.personEmail}
+                            onPress={() => sendEmail(item.postedBy.email)}
+                        >
+                            {item.postedBy.email}
+                        </Text>
+                    </View>
+
+                </View>
+            );
     }
 
     if (item == undefined)
@@ -150,8 +205,8 @@ const ItemDescOverlay = ({ item, itemImage, isVisible, onBackdropPressHandler, t
             onBackdropPress={onBackdropPressHandler}
             overlayStyle={styles.overlay}
         >
-            <ScrollView style={{}}>
-                <View style={{ paddingHorizontal: 20 }}>
+            <ScrollView>
+                <View style={{ paddingHorizontal: 20, minWidth: '95%' }}>
                     <ItemDesc />
 
                     {item.postedBy._id.toString() == userId ?
@@ -200,7 +255,9 @@ const styles = StyleSheet.create({
     overlay: {
         width: '80%',
         height: '60%',
-        paddingHorizontal: 5,
+        padding: 'auto',
+        alignItems: 'center',
+        // paddingHorizontal: 5,
         paddingVertical: 15,
         elevation: 0
     },
@@ -210,9 +267,9 @@ const styles = StyleSheet.create({
     itemImage: {
         width: 300,
         height: 300,
-        margin: 10,
-        marginLeft: 'auto',
-        marginRight: 'auto'
+        margin: 'auto',
+        // marginLeft: 'auto',
+        // marginRight: 'auto'
     },
     itemName: {
         fontWeight: 'bold',
@@ -242,6 +299,11 @@ const styles = StyleSheet.create({
         // color: 'black',
         fontSize: 16,
         marginTop: 5
+    },
+    itemType: {
+        flex: 1,
+        fontWeight: 'bold',
+        fontSize: 18
     },
     personName: {
         flex: 1,
@@ -275,11 +337,6 @@ const styles = StyleSheet.create({
         marginBottom: 0,
         marginTop: 10,
     },
-    jobType: {
-        flex: 1,
-        fontWeight: 'bold',
-        fontSize: 18
-    }
 });
 
 export default ItemDescOverlay;
