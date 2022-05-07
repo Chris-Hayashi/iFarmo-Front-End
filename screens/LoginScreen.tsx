@@ -7,9 +7,7 @@ import { useEffect, useState } from "react";
 
 import axios from "axios";
 
-export default function LoginScreen({
-  navigation,
-}: RootStackScreenProps<"Login">) {
+export default function LoginScreen({ navigation }: RootStackScreenProps<"Login">) {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [hidePassword, setHidePassword] = useState(true);
@@ -52,6 +50,7 @@ export default function LoginScreen({
       <Input
         placeholder="Username"
         autoCapitalize="none"
+        autoCorrect={false}
         leftIcon={{ type: "font-awesome", name: "user" }}
         leftIconContainerStyle={styles.usernameIconContainerStyle}
         onChangeText={setLogin}
@@ -59,21 +58,22 @@ export default function LoginScreen({
       <Input
         placeholder="Password"
         autoCapitalize="none"
+        autoCorrect={false}
         secureTextEntry={hidePassword}
         leftIcon={{ type: "font-awesome", name: "lock" }}
         leftIconContainerStyle={styles.passwordIconContainerStyle}
         rightIcon={
           hidePassword
             ? {
-                type: "font-awesome",
-                name: "eye-slash",
-                onPress: () => setHidePassword(!hidePassword),
-              }
+              type: "font-awesome",
+              name: "eye-slash",
+              onPress: () => setHidePassword(!hidePassword),
+            }
             : {
-                type: "font-awesome",
-                name: "eye",
-                onPress: () => setHidePassword(!hidePassword),
-              }
+              type: "font-awesome",
+              name: "eye",
+              onPress: () => setHidePassword(!hidePassword),
+            }
         }
         onChangeText={setPassword}
       />

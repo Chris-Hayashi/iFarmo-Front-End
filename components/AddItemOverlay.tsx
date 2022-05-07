@@ -1,20 +1,15 @@
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import { Input, Overlay, Button } from 'react-native-elements';
 import { Dropdown } from 'react-native-element-dropdown';
 import { View } from '../components/Themed';
+import Item from './objects/Item';
 
-const AddItemOverlay = ({ postItem, isVisible, onBackdropPressHandler }: any) => {
+const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: any) => {
     const [overlayVisible, setOverlayVisible] = useState(false);
 
-    let itemObj = {
-        'name': '',
-        'type': '',
-        'description': '',
-        'quantity': '',
-        'unitType': '',
-        'price': ''
-    };
+    let item = new Item();
+
     const itemTypes = [
         { label: 'Vegetable', value: '1' },
         { label: 'Fruit', value: '2' },
@@ -31,65 +26,208 @@ const AddItemOverlay = ({ postItem, isVisible, onBackdropPressHandler }: any) =>
         { label: 'kg', value: '2' },
         { label: 'g', value: '3' },
         { label: 'piece', value: '4' }
-    ]
+    ];
+
+    const OverlayContent = () => {
+        if (type === 'product') {
+            item.setItemType('product');
+            return (
+                <>
+                    <ScrollView>
+
+                        <View>
+
+                            <Input placeholder="Product Name" onChangeText={(value) => item.setName(value)} />
+                            {/* <Text style={styles.dropdownLabel}>Product Type</Text> */}
+                            <Dropdown
+                                style={styles.dropdown}
+                                placeholderStyle={styles.placeholder}
+                                data={itemTypes}
+                                labelField='label'
+                                valueField='value'
+                                value={item.type}
+                                placeholder={'Select Product Type'}
+                                onChange={value => item.setType(value.label)}
+                            />
+                            <Input placeholder='Description'
+                                onChangeText={(value) => item.setDescription(value)}
+                                style={{ marginTop: 15 }}
+                                multiline={true}
+                            />
+
+                            <Input placeholder='City'
+                                onChangeText={(value) => item.setCity(value)}
+                                style={{ marginTop: 10 }}
+                            />
+                            <Input placeholder='Quantity'
+                                onChangeText={(value) => item.setQuantity(value)}
+                                style={{ marginTop: 10 }}
+                            />
+                            <Dropdown
+                                style={styles.dropdown}
+                                placeholderStyle={styles.placeholder}
+                                data={unitTypes}
+                                labelField='label'
+                                valueField='value'
+                                value={item.unitType}
+                                placeholder={'Select Unit Type'}
+                                onChange={value => item.setUnitType(value.label)}
+                            />
+                            <Input placeholder='Price'
+                                onChangeText={(value) => item.setPrice(value)}
+                                style={{ marginTop: 15 }} />
+
+
+                        </View>
+                    </ScrollView>
+                    <Button title='Add Product'
+                        // color='black'
+                        style={styles.addProductBtn}
+                        onPress={() => {
+                            postItem(item);
+                        }}
+                    />
+                </>
+            );
+        } else if (type === 'job') {
+            item.setItemType('job');
+            return (
+                <>
+                    <ScrollView>
+
+                        <View>
+
+                            <Input placeholder="Job Title" onChangeText={(value) => item.setTitle(value)} />
+                            {/* <Text style={styles.dropdownLabel}>Product Type</Text> */}
+                            <Dropdown
+                                style={styles.dropdown}
+                                placeholderStyle={styles.placeholder}
+                                data={item.getTypes()}
+                                labelField='label'
+                                valueField='value'
+                                value={item.type}
+                                placeholder={'Select Job Type'}
+                                onChange={value => item.setType(value.label)}
+                            />
+                            <Input placeholder='Description'
+                                onChangeText={(value) => item.setDescription(value)}
+                                style={{ marginTop: 15 }}
+                                multiline={true}
+                            />
+
+                            <Input placeholder='City'
+                                onChangeText={(value) => item.setCity(value)}
+                                style={{ marginTop: 10 }}
+                            />
+                            <Dropdown
+                                style={styles.dropdown}
+                                placeholderStyle={styles.placeholder}
+                                data={item.getUnitTypes()}
+                                labelField='label'
+                                valueField='value'
+                                value={item.unitType}
+                                placeholder={'Select Per Time Basis'}
+                                onChange={value => item.setUnitType(value.label)}
+                            />
+                            <Input placeholder='Compensation'
+                                onChangeText={(value) => item.setSalary(value)}
+                                style={{ marginTop: 15 }} />
+
+
+                        </View>
+                    </ScrollView>
+                    <Button title='Add Job'
+                        // color='black'
+                        style={styles.addProductBtn}
+                        onPress={() => {
+                            postItem({
+                                'title': item.title,
+                                'type': item.type,
+                                'description': item.description,
+                                'salary': item.salary,
+                                'unitType': item.unitType,
+                                'city': item.city
+                            });
+                        }}
+                    />
+                </>
+            );
+        }
+        // Equipment
+        else {
+            item.setItemType('equipment');
+            return (
+                <>
+                    <ScrollView>
+
+                        <View>
+
+                            <Input placeholder="Equipment Title" onChangeText={(value) => item.setTitle(value)} />
+                            {/* <Text style={styles.dropdownLabel}>Product Type</Text> */}
+                            <Dropdown
+                                style={styles.dropdown}
+                                placeholderStyle={styles.placeholder}
+                                data={item.getTypes()}
+                                labelField='label'
+                                valueField='value'
+                                value={item.type}
+                                placeholder={'Select Equipment Type'}
+                                onChange={value => item.setType(value.label)}
+                            />
+                            <Input placeholder='Description'
+                                onChangeText={(value) => item.setDescription(value)}
+                                style={{ marginTop: 15 }}
+                                multiline={true}
+                            />
+
+                            <Input placeholder='City'
+                                onChangeText={(value) => item.setCity(value)}
+                                style={{ marginTop: 10 }}
+                            />
+                            <Dropdown
+                                style={styles.dropdown}
+                                placeholderStyle={styles.placeholder}
+                                data={item.getUnitTypes()}
+                                labelField='label'
+                                valueField='value'
+                                value={item.unitType}
+                                placeholder={'Select Unit Type'}
+                                onChange={value => item.setUnitType(value.label)}
+                            />
+                            <Input placeholder='Price'
+                                onChangeText={(value) => item.setPrice(value)}
+                                style={{ marginTop: 15 }} />
+
+
+                        </View>
+                    </ScrollView>
+                    <Button title='Add Equipment'
+                        // color='black'
+                        style={styles.addProductBtn}
+                        onPress={() => {
+                            postItem({
+                                'title': item.title,
+                                'type': item.type,
+                                'description': item.description,
+                                'price': item.price,
+                                'unitType': item.unitType,
+                                'city': item.city
+                            });
+                        }}
+                    />
+                </>
+            );
+        }
+    }
 
     return (
-        <View>
-            <Overlay
-                isVisible={isVisible}
-                onBackdropPress={onBackdropPressHandler}
-                overlayStyle={styles.overlay}
-            >
-                {/* Add Item Form */}
-
-                <Input placeholder="Product Name" onChangeText={(value) => itemObj.name = value} />
-                {/* <Text style={styles.dropdownLabel}>Product Type</Text> */}
-                <Dropdown
-                    style={styles.dropdown}
-                    placeholderStyle={styles.placeholder}
-                    data={itemTypes}
-                    labelField='label'
-                    valueField='value'
-                    value={itemObj.type}
-                    placeholder={'Select Product Type'}
-                    onChange={item => {
-                        itemObj.type = item.label;
-                    }}
-                />
-                <Input placeholder='Description'
-                    onChangeText={(value) => itemObj.description = value}
-                    style={{ marginTop: 15 }}
-                />
-                <Input placeholder='Quantity'
-                    onChangeText={(value) => itemObj.quantity = value}
-                    style={{ marginTop: 10 }}
-                />
-                <Dropdown
-                    style={styles.dropdown}
-                    placeholderStyle={styles.placeholder}
-                    data={unitTypes}
-                    labelField='label'
-                    valueField='value'
-                    value={itemObj.unitType}
-                    placeholder={'Select Unit Type'}
-                    onChange={item => {
-                        itemObj.unitType = item.label;
-                    }}
-                />
-                <Input placeholder='Price'
-                    onChangeText={(value) => itemObj.price = value}
-                    style={{ marginTop: 15 }} />
-
-                <Button title='Add Product'
-                    // color='black'
-                    style={styles.addProductBtn}
-                    onPress={() => {
-                        postItem(itemObj);
-                    }}
-                />
-
-            </Overlay>
-        </View>
+        <Overlay
+            isVisible={isVisible}
+            onBackdropPress={onBackdropPressHandler}
+            overlayStyle={styles.overlay}
+        >
+            <OverlayContent />
+        </Overlay>
     );
 };
 
