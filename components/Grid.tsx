@@ -40,6 +40,12 @@ const Grid = ({ items, type, isHome }: any) => {
                     return require('../assets/images/baked_goods.png');
                 case 'Plants':
                     return require('../assets/images/plants.png');
+                case 'Tools':
+                    return require('../assets/images/tools.png');
+                case 'Materials':
+                    return require('../assets/images/materials.png');
+                case 'Machinery':
+                    return require('../assets/images/machinery.png');
                 case 'Other':
                     return require('../assets/images/other.png');
                 default:
@@ -107,7 +113,7 @@ const Grid = ({ items, type, isHome }: any) => {
                     <Card.Image
                         style={styles.image}
                         source={
-                            item.imagePath ? { uri: item.imagePath } : getItemImage(item.type)
+                            item.imagePath ? { uri: item.imagePath } : getItemImage(item)
                         }
                     />
                     <Card.Title style={[styles.itemName]}>{item.title}</Card.Title>

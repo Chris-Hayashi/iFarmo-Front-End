@@ -72,10 +72,12 @@ function BottomTabNavigator({ navigation }: RootTabScreenProps<'HomeTab'>) {
       initialRouteName="HomeTab"
       screenOptions={{
         headerShown: true,
+        headerStyle: styles.header,
         headerLeft: () =>
           <Icon
             name='user'
-            type='font-awesome-5' // other icons are from 'antdesign'
+            type='font-awesome-5'
+            // color='#444444'
             solid={true}
             style={styles.profileIcon}
             onPress={() => navigation.navigate('UserProfile')}
@@ -84,13 +86,17 @@ function BottomTabNavigator({ navigation }: RootTabScreenProps<'HomeTab'>) {
           <Icon
             name='log-out'
             type='feather'
+            // color='#1F622A'
             containerStyle={styles.logoutIcon}
             onPress={async () => {
               await AsyncStorage.removeItem('auth-token');
               navigation.navigate('Login');
             }}
           />,
-        tabBarActiveTintColor: Colors[colorScheme].tint,
+        tabBarStyle: styles.header,
+        tabBarActiveTintColor: '#1F822A',
+        // tabBarActiveTintColor: Colors[colorScheme].tint,
+
       }}>
       <BottomTab.Screen
         name="HomeTab"
@@ -146,6 +152,9 @@ function Header(props: any) {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    backgroundColor: '#FFF5EA'
+  },
   profileIcon: {
     marginLeft: 20
   },
