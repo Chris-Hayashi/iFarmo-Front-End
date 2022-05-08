@@ -1,12 +1,26 @@
-import { useState } from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
-import { Input, Overlay, Button } from 'react-native-elements';
+import { useState, useEffect } from 'react';
+import { StyleSheet, ScrollView, TouchableOpacity, View, Platform } from 'react-native';
+import { Input, Overlay, Button, Icon, Text, Image } from 'react-native-elements';
 import { Dropdown } from 'react-native-element-dropdown';
-import { View } from '../components/Themed';
+import * as ImagePicker from 'expo-image-picker';
 import Item from './objects/Item';
 
 const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: any) => {
     const [overlayVisible, setOverlayVisible] = useState(false);
+    const [imageUri, setImageUri] = useState('');
+
+    useEffect(() => {
+        console.log('useEffect running');
+        (async () => {
+            if (Platform.OS !== 'web') {
+                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (status !== 'granted') {
+                    alert('Sorry, we need camera roll permissions to make this work!');
+                }
+            }
+        })();
+        console.log('imageUri (inside useEffect): ', imageUri);
+    }, [imageUri]);
 
     let item = new Item();
 
@@ -27,6 +41,83 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
         { label: 'g', value: '3' },
         { label: 'piece', value: '4' }
     ];
+
+
+
+    const handleChoosePhoto = async () => {
+        console.log('handleChoosePhoto running');
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        console.log(result);
+
+        if (!result.cancelled) {
+            // console.log('result.uri: ', result.uri);
+            setImageUri(result.uri);
+            // console.log('imageUri: ', imageUri);
+        }
+    };
+
+    const PhotoUpload = () => {
+        if (imageUri === '')
+            return (
+
+                <TouchableOpacity onPress={handleChoosePhoto}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Icon
+                            name='camera-retro'
+                            type='font-awesome-5'
+                            color='grey'
+                            style={{ flex: 1, marginLeft: 10 }}
+                        />
+                        <Text
+                            style={{
+                                flex: 1,
+                                marginLeft: 10,
+                                alignSelf: 'center',
+                                // color: 'grey'
+                            }}
+                        >
+                            Upload Image
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            );
+        else
+            return (
+                <View style={{ flexDirection: 'row' }}>
+
+                    <TouchableOpacity style={{ flexDirection: 'row' }} onPress={handleChoosePhoto}>
+
+                        <Image source={{ uri: imageUri }} style={styles.image} />
+                        <Icon
+                            name='check'
+                            type='font-awesome-5'
+                            color='green'
+                            style={{ flex: 1, marginLeft: 10, justifyContent: 'center' }}
+                        />
+                        <Text style={{ marginLeft: 10, alignSelf: 'center', justifyContent: 'center' }}>Uploaded Image</Text>
+                    </TouchableOpacity>
+
+                    <View style={{ flex: 1, margin: 0, padding: 0, justifyContent: 'center' }}>
+                        <Icon
+                            name='x'
+                            type='feather'
+                            color='grey'
+                            style={{ flex: 1, alignSelf: 'flex-end' }}
+                            onPress={() => setImageUri('')}
+                        />
+                    </View>
+                </View>
+            );
+
+
+    }
 
     const OverlayContent = () => {
         if (type === 'product') {
@@ -75,8 +166,10 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
                             />
                             <Input placeholder='Price'
                                 onChangeText={(value) => item.setPrice(value)}
-                                style={{ marginTop: 15 }} />
+                                style={{ marginTop: 15 }}
+                            />
 
+                            <PhotoUpload />
 
                         </View>
                     </ScrollView>
@@ -131,9 +224,8 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
                             />
                             <Input placeholder='Compensation'
                                 onChangeText={(value) => item.setSalary(value)}
-                                style={{ marginTop: 15 }} />
-
-
+                                style={{ marginTop: 15 }}
+                            />
                         </View>
                     </ScrollView>
                     <Button title='Add Job'
@@ -161,6 +253,7 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
                     <ScrollView>
 
                         <View>
+
 
                             <Input placeholder="Equipment Title" onChangeText={(value) => item.setTitle(value)} />
                             {/* <Text style={styles.dropdownLabel}>Product Type</Text> */}
@@ -196,8 +289,10 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
                             />
                             <Input placeholder='Price'
                                 onChangeText={(value) => item.setPrice(value)}
-                                style={{ marginTop: 15 }} />
+                                style={{ marginTop: 15 }}
+                            />
 
+                            <PhotoUpload />
 
                         </View>
                     </ScrollView>
@@ -258,6 +353,12 @@ const styles = StyleSheet.create({
     placeholder: {
         color: 'grey'
     },
+    image: {
+        flex: 1,
+        marginLeft: 10,
+        minWidth: 35,
+        minHeight: 35,
+    }
 });
 
 export default AddItemOverlay;
