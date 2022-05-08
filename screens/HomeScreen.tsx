@@ -59,7 +59,7 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
   const getProductsByUser = async () => {
     let token: any = await AsyncStorage.getItem("auth-token");
 
-    await axios.get('https://nodejs-ifarmo.herokuapp.com/api/products/myproducts', {
+    await axios.get(`https://nodejs-ifarmo.herokuapp.com/api/products/myproducts?searchKey=${search}`, {
       headers: {
         'auth-token': token
       }
@@ -78,7 +78,7 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
   const getJobsByUser = async () => {
     let token: any = await AsyncStorage.getItem("auth-token");
 
-    await axios.get('https://nodejs-ifarmo.herokuapp.com/api/jobs/myjobs', {
+    await axios.get(`https://nodejs-ifarmo.herokuapp.com/api/jobs/myjobs?searchKey=${search}`, {
       headers: {
         'auth-token': token
       }
@@ -96,7 +96,7 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
   const getEquipmentsByUser = async () => {
     let token: any = await AsyncStorage.getItem("auth-token");
 
-    await axios.get('https://nodejs-ifarmo.herokuapp.com/api/equipments/myequipments', {
+    await axios.get(`https://nodejs-ifarmo.herokuapp.com/api/equipments/myequipments?searchKey=${search}`, {
       headers: {
         'auth-token': token
       }
@@ -119,8 +119,7 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
+    <View style={styles.container}>
         <View style={{ display: 'flex', flexDirection: 'row', marginBottom: 0 }}>
           <SearchBar
             placeholder='Search'
@@ -132,8 +131,9 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
             platform='ios'
             theme='light'
             style={styles.searchBar}
-          />
+            />
         </View>
+            <ScrollView>
 
         {role === 'farmer'
           ?
@@ -158,8 +158,8 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
           ? <Text style={styles.text}>You have not posted any equipment</Text>
           : <Grid items={equipments} type='equipments' isHome={true} />
         }
-      </View>
     </ScrollView>
+      </View>
   );
 }
 
@@ -169,6 +169,7 @@ const styles = StyleSheet.create({
     // flexDirection: 'column',
     alignItems: 'flex-start',
     justifyContent: 'center',
+    backgroundColor: '#FFF5EA',
     padding: 5,
     paddingTop: 15,
     marginTop: 0
@@ -187,7 +188,8 @@ const styles = StyleSheet.create({
     padding: 0
   },
   text: {
-    marginHorizontal: 10
+    marginHorizontal: 10,
+    color: '#666666'
   },
   searchBar: {
     flex: 1,
