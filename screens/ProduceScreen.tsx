@@ -10,6 +10,7 @@ import { RootStackScreenProps } from '../types';
 import axios from 'axios';
 import Grid from '../components/Grid';
 import AddItemOverlay from '../components/AddItemOverlay'
+import * as FileSystem from 'expo-file-system';
 
 export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>) {
   const [search, setSearch] = useState('');
@@ -25,6 +26,18 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   type SearchBarComponentProps = {};
 
   useEffect(() => {
+
+    const getProducts = async () => {
+      await axios.get(`https://nodejs-ifarmo.herokuapp.com/api/products?searchKey=${search}&filter=${filter}`)
+        .then(res => {
+          setItemArray(res.data);
+        })
+        .catch(err => {
+          alert(err.response.request._response);
+          console.log(err.response.request._response);
+        });
+    }
+
     getUserRole();
     getProducts();
   }, [render, search, filter]);
@@ -35,7 +48,6 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
       const token = await AsyncStorage.getItem('auth-token');
       if (token != null) {
         var decoded_token: { _id: string } = jwt_decode(token);
-        // console.log("decoded token: ", decoded_token);
         userId = decoded_token._id;
       }
     }
@@ -49,9 +61,8 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   const getUserRole = async () => {
     const userId = await getUserId();
 
-    axios.get('https://nodejs-ifarmo.herokuapp.com/api/users/' + userId)
+    await axios.get('https://nodejs-ifarmo.herokuapp.com/api/users/' + userId)
       .then(res => {
-        // not sure how to get this to work @CHRIS
         setRole(res.data.role);
       })
       .catch(err => {
@@ -60,32 +71,44 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
       });
   }
 
+  const postProduct = async (product: Record<string, string>, imageUri: string) => {
+    let token: any = await AsyncStorage.getItem("auth-token");
 
-  const getProducts = async () => {
-    await axios.get(`https://nodejs-ifarmo.herokuapp.com/api/products?searchKey=${search}&filter=${filter}`)
-      .then(res => {
-        setItemArray(res.data);
-      })
-      .catch(err => {
+    if (imageUri !== undefined) {
+      let options = {
+        headers: {
+          'auth-token': token
+        },
+        fieldName: 'image',
+        mimeType: 'image/jpeg',
+        uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+        parameters: product
+      };
+      await FileSystem.uploadAsync('https://nodejs-ifarmo.herokuapp.com/api/products', imageUri, options)
+        .then(res => {
+          console.log(res);
+          setOverlayVisible(false);
+          setRender(!render);
+        })
+        .catch(err => {
+          alert(err.response.request._response);
+          console.log(err.response.request._response);
+        });
+    }
+
+    else {
+      await axios.post('https://nodejs-ifarmo.herokuapp.com/api/products', product, {
+        headers: {
+          'auth-token': token
+        }
+      }).then(res => {
+        setOverlayVisible(false);
+        setRender(!render);
+      }).catch(err => {
         alert(err.response.request._response);
         console.log(err.response.request._response);
       });
-  }
-
-  const postProduct = async (productObj: {}) => {
-    let token: any = await AsyncStorage.getItem("auth-token");
-
-    axios.post('https://nodejs-ifarmo.herokuapp.com/api/products', productObj, {
-      headers: {
-        'auth-token': token
-      }
-    }).then(res => {
-      setRender(true);
-      setOverlayVisible(false);
-    }).catch(err => {
-      alert(err.response.request._response);
-      console.log(err.response.request._response);
-    });
+    }
   }
 
   const toggleAddItemOverlay = () => {
@@ -101,7 +124,6 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
             placeholder='Search'
             onChangeText={(val) => {
               setSearch(val);
-              // getProducts();
             }}
             value={search}
             platform='ios'
@@ -163,7 +185,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFF5EA',
-    // marginTop: 25,
     padding: 5,
     paddingTop: 15
   },
@@ -175,7 +196,6 @@ const styles = StyleSheet.create({
   filterIcon: {
     flex: 1,
     justifyContent: 'space-between',
-    // alignItems: 'center',
     marginHorizontal: 10
   },
   searchBar: {

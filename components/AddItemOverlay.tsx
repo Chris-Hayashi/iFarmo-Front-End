@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { StyleSheet, ScrollView, TouchableOpacity, View, Platform } from 'react-native';
 import { Input, Overlay, Button, Icon, Text, Image } from 'react-native-elements';
 import { Dropdown } from 'react-native-element-dropdown';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
+import PhotoUpload from './PhotoUpload';
 import Item from './objects/Item';
 
 const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: any) => {
     const [overlayVisible, setOverlayVisible] = useState(false);
-    const [imageUri, setImageUri] = useState('');
 
     useEffect(() => {
-        // console.log('useEffect running');
         (async () => {
             if (Platform.OS !== 'web') {
                 const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -19,22 +19,10 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
                 }
             }
         })();
-        // console.log('imageUri (inside useEffect): ', imageUri);
-    }, [imageUri]);
+    }, []);
 
     let item = new Item();
 
-    const itemTypes = [
-        { label: 'Vegetable', value: '1' },
-        { label: 'Fruit', value: '2' },
-        { label: 'Nuts', value: '3' },
-        { label: 'Meat', value: '4' },
-        { label: 'Dairy', value: '5' },
-        { label: 'Grains', value: '6' },
-        { label: 'Baked Goods', value: '7' },
-        { label: 'Plants', value: '8' },
-        { label: 'Other', value: '9' },
-    ];
     const unitTypes = [
         { label: 'lb', value: '1' },
         { label: 'kg', value: '2' },
@@ -42,102 +30,18 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
         { label: 'piece', value: '4' }
     ];
 
-
-
-    const handleChoosePhoto = async () => {
-        console.log('handleChoosePhoto running');
-
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        // console.log(result);
-
-        if (!result.cancelled) {
-            // console.log('result.uri: ', result.uri);
-            setImageUri(result.uri);
-            item.setImage(result.uri);
-            
-            // const formData = new FormData();
-            // formData.append('photo', result.uri);
-        }
-    };
-
-    const PhotoUpload = () => {
-        if (imageUri === '')
-            return (
-                <TouchableOpacity onPress={handleChoosePhoto}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Icon
-                            name='camera-retro'
-                            type='font-awesome-5'
-                            color='grey'
-                            style={{ flex: 1, marginLeft: 10 }}
-                        />
-                        <Text
-                            style={{
-                                flex: 1,
-                                marginLeft: 10,
-                                alignSelf: 'center',
-                                // color: 'grey'
-                            }}
-                        >
-                            Upload Image
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-            );
-        else
-            return (
-                <View style={{ flexDirection: 'row' }}>
-
-                    <TouchableOpacity style={{ flexDirection: 'row' }} onPress={handleChoosePhoto}>
-
-                        <Image source={{ uri: imageUri }} style={styles.image} />
-                        <Icon
-                            name='check'
-                            type='font-awesome-5'
-                            color='green'
-                            style={{ flex: 1, marginLeft: 10, justifyContent: 'center' }}
-                        />
-                        <Text style={{ marginLeft: 10, alignSelf: 'center', justifyContent: 'center' }}>Uploaded Image</Text>
-                    </TouchableOpacity>
-
-                    <View style={{ flex: 1, margin: 0, padding: 0, justifyContent: 'center' }}>
-                        <Icon
-                            name='x'
-                            type='feather'
-                            color='grey'
-                            style={{ flex: 1, alignSelf: 'flex-end' }}
-                            onPress={() => {
-                                setImageUri('');
-                            }}
-                        />
-                    </View>
-                </View>
-            );
-
-
-    }
-
     const OverlayContent = () => {
         if (type === 'product') {
             item.setItemType('product');
             return (
                 <>
                     <ScrollView>
-
                         <View>
-
-                            <Input placeholder="Product Name" onChangeText={(value) => item.setName(value)} />
-                            {/* <Text style={styles.dropdownLabel}>Product Type</Text> */}
+                            <Input placeholder="Product Name" value={item.name} onChangeText={(value) => item.setName(value)} />
                             <Dropdown
                                 style={styles.dropdown}
                                 placeholderStyle={styles.placeholder}
-                                data={itemTypes}
+                                data={item.getTypes()}
                                 labelField='label'
                                 valueField='value'
                                 value={item.type}
@@ -173,15 +77,22 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
                                 style={{ marginTop: 15 }}
                             />
 
-                            <PhotoUpload />
+                            <PhotoUpload item={item} />
 
                         </View>
                     </ScrollView>
                     <Button title='Add Product'
                         // color='black'
                         style={styles.addProductBtn}
-                        onPress={() => {
-                            postItem(item);
+                        onPress={async() => {
+                            await postItem({
+                                'name': item.name,
+                                'type': item.type,
+                                'description': item.description,
+                                'price': item.price,
+                                'unitType': item.unitType,
+                                'city': item.city
+                            }, item.image);
                         }}
                     />
                 </>
@@ -193,9 +104,7 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
                     <ScrollView>
 
                         <View>
-
                             <Input placeholder="Job Title" onChangeText={(value) => item.setTitle(value)} />
-                            {/* <Text style={styles.dropdownLabel}>Product Type</Text> */}
                             <Dropdown
                                 style={styles.dropdown}
                                 placeholderStyle={styles.placeholder}
@@ -235,8 +144,8 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
                     <Button title='Add Job'
                         // color='black'
                         style={styles.addProductBtn}
-                        onPress={() => {
-                            postItem({
+                        onPress={async() => {
+                            await postItem({
                                 'title': item.title,
                                 'type': item.type,
                                 'description': item.description,
@@ -249,6 +158,7 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
                 </>
             );
         }
+
         // Equipment
         else {
             item.setItemType('equipment');
@@ -259,76 +169,79 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
                         <View>
 
 
-                            <Input placeholder="Equipment Title" onChangeText={(value) => item.setTitle(value)} />
-                            {/* <Text style={styles.dropdownLabel}>Product Type</Text> */}
-                            <Dropdown
-                                style={styles.dropdown}
-                                placeholderStyle={styles.placeholder}
-                                data={item.getTypes()}
-                                labelField='label'
-                                valueField='value'
-                                value={item.type}
-                                placeholder={'Select Equipment Type'}
-                                onChange={value => item.setType(value.label)}
-                            />
-                            <Input placeholder='Description'
-                                onChangeText={(value) => item.setDescription(value)}
-                                style={{ marginTop: 15 }}
-                                multiline={true}
-                            />
+                            {useMemo(() => {
 
-                            <Input placeholder='City'
-                                onChangeText={(value) => item.setCity(value)}
-                                style={{ marginTop: 10 }}
-                            />
-                            <Dropdown
-                                style={styles.dropdown}
-                                placeholderStyle={styles.placeholder}
-                                data={item.getUnitTypes()}
-                                labelField='label'
-                                valueField='value'
-                                value={item.unitType}
-                                placeholder={'Select Unit Type'}
-                                onChange={value => item.setUnitType(value.label)}
-                            />
-                            <Input placeholder='Price'
-                                onChangeText={(value) => item.setPrice(value)}
-                                style={{ marginTop: 15 }}
-                            />
+                                return (
+                                    <>
 
-                            <PhotoUpload />
+                                        <Input placeholder="Equipment Title" onChangeText={(value) => item.setTitle(value)} />
+                                        <Dropdown
+                                            style={styles.dropdown}
+                                            placeholderStyle={styles.placeholder}
+                                            data={item.getTypes()}
+                                            labelField='label'
+                                            valueField='value'
+                                            value={item.type}
+                                            placeholder={'Select Equipment Type'}
+                                            onChange={value => item.setType(value.label)}
+                                        />
+                                        <Input placeholder='Description'
+                                            onChangeText={(value) => item.setDescription(value)}
+                                            style={{ marginTop: 15 }}
+                                            multiline={true}
+                                        />
+
+                                        <Input placeholder='City'
+                                            onChangeText={(value) => item.setCity(value)}
+                                            style={{ marginTop: 10 }}
+                                        />
+                                        <Dropdown
+                                            style={styles.dropdown}
+                                            placeholderStyle={styles.placeholder}
+                                            data={item.getUnitTypes()}
+                                            labelField='label'
+                                            valueField='value'
+                                            value={item.unitType}
+                                            placeholder={'Select Unit Type'}
+                                            onChange={value => item.setUnitType(value.label)}
+                                        />
+                                        <Input placeholder='Price'
+                                            onChangeText={(value) => item.setPrice(value)}
+                                            style={{ marginTop: 15 }}
+                                        />
+                                    </>
+                                );
+                            }, [])}
+
+                            <PhotoUpload item={item} />
 
                         </View>
                     </ScrollView>
                     <Button title='Add Equipment'
                         // color='black'
                         style={styles.addProductBtn}
-                        onPress={() => {
-                            // if ()
-                            // const itemObj = {
-
-                            // };
-                            postItem({
+                        onPress={async () => {
+                            await postItem({
                                 'title': item.title,
                                 'type': item.type,
                                 'description': item.description,
                                 'price': item.price,
                                 'unitType': item.unitType,
                                 'city': item.city,
-                            }, imageUri);
+                            }, item.image);
                         }}
                     />
                 </>
             );
         }
-    }
+    };
 
     return (
         <Overlay
             isVisible={isVisible}
             onBackdropPress={() => {
                 onBackdropPressHandler();
-                setImageUri('');
+                setOverlayVisible(!overlayVisible);
             }}
             overlayStyle={styles.overlay}
         >

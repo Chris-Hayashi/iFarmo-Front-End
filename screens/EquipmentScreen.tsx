@@ -20,71 +20,60 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
   const [filterVisible, setFilterVisible] = useState(false);
   const [render, setRender] = useState(false);
 
-  const equipmentTypes = [
-    { label: 'Tools', value: '1' },
-    { label: 'Heavy Machinery', value: '2' },
-    { label: 'Vehicles', value: '3' },
-    { label: 'Other', value: '4' },
-  ];
-  const unitTypes = [
-    { label: 'units', value: '1' }
-  ]
-  let selectedEquipmentType: any = null;
-  let selectedUnitType: any = null;
-
-  // let equipmentObj = {
-  //   'title': '',
-  //   'desc': '',
-  //   'price': '',
-  //   'type': '',
-  //   'quantity': '',
-  //   'unitType': ''
-  // };
-
-
-  type OverlayComponentProps = {};
-  type SearchBarComponentProps = {};
-
   useEffect(() => {
+    const getEquipment = async () => {
+      await axios.get(`https://nodejs-ifarmo.herokuapp.com/api/equipments?searchKey=${search}&filter=${filter}`)
+        .then(res => {
+          console.log("GET EQUIPMENT");
+          setItemArray(res.data);
+        })
+        .catch(err => {
+          alert(err.response.request._response);
+          console.log(err.response.request._response);
+        });
+    }
     getEquipment();
 
   }, [render, search, filter]);
 
-  const getEquipment = () => {
-    axios.get(`https://nodejs-ifarmo.herokuapp.com/api/equipments?searchKey=${search}&filter=${filter}`)
-      .then(res => {
-        console.log("GET EQUIPMENT");
-        setItemArray(res.data);
-      })
-      .catch(err => {
-        alert(err.response.request._response);
-        console.log(err.response.request._response);
-      });
-  }
-
   const postEquipment = async (equipment: Record<string, string>, imageUri: string) => {
     let token: any = await AsyncStorage.getItem("auth-token");
 
-    let options = {
-      headers: {
-        'auth-token': token
-      },
-      fieldName: 'image',
-      mimeType: 'image/jpeg',
-      uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-      parameters: equipment
-    };
+    if (imageUri !== undefined) {
+      let options = {
+        headers: {
+          'auth-token': token
+        },
+        fieldName: 'image',
+        mimeType: 'image/jpeg',
+        uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+        parameters: equipment
+      };
+      await FileSystem.uploadAsync('https://nodejs-ifarmo.herokuapp.com/api/equipments', imageUri, options)
+        .then(res => {
+          console.log(res);
+          setOverlayVisible(false);
+          setRender(!render);
+        })
+        .catch(err => {
+          alert(err.response.request._response);
+          console.log(err.response.request._response);
+        });
+    }
 
-    await FileSystem.uploadAsync('https://nodejs-ifarmo.herokuapp.com/api/equipments', imageUri, options)
-      .then(res => {
-        console.log(res);
-        setRender(true);
+    else {
+      await axios.post('https://nodejs-ifarmo.herokuapp.com/api/equipments', equipment, {
+        headers: {
+          'auth-token': token
+        }
+      }).then(res => {
         setOverlayVisible(false);
-      })
-      .catch(err => {
+        setRender(!render);
+      }).catch(err => {
         alert(err.response.request._response);
         console.log(err.response.request._response);
       });
+    }
   }
 
   const toggleAddItemOverlay = () => {
@@ -100,7 +89,6 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
             // autoCapitalize={'none'}
             onChangeText={(val) => {
               setSearch(val);
-              // getProducts();
             }}
             value={search}
             platform='ios'
