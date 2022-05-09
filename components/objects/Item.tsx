@@ -9,6 +9,7 @@ class Item {
     'price': string;
     'salary': string;
     'city': string;
+    'image': any
 
     constructor() {
     }
@@ -78,6 +79,11 @@ class Item {
 
     setCity(city: any) {
         this.city = city;
+        return this;
+    }
+
+    setImage(image: any) {
+        this.image = image;
         return this;
     }
 
