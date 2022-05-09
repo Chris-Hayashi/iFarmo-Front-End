@@ -8,6 +8,7 @@ import { RootStackScreenProps } from '../types';
 import axios from 'axios';
 import Grid from '../components/Grid';
 import AddItemOverlay from '../components/AddItemOverlay';
+import * as FileSystem from 'expo-file-system';
 
 export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Equipment'>) {
 
@@ -61,22 +62,29 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
       });
   }
 
-  const postEquipment = async (equipment : object) => {
+  const postEquipment = async (equipment: Record<string, string>, imageUri: string) => {
     let token: any = await AsyncStorage.getItem("auth-token");
-    console.log("token: ", JSON.stringify(token));
 
-    axios.post('https://nodejs-ifarmo.herokuapp.com/api/equipments', equipment, {
+    let options = {
       headers: {
         'auth-token': token
-      }
-    }).then(res => {
-      console.log("postEquipment() res: ", res);
-      setRender(true);
-      setOverlayVisible(false);
-    }).catch(err => {
-      alert(err.response.request._response);
-      console.log(err.response.request._response);
-    });
+      },
+      fieldName: 'image',
+      mimeType: 'image/jpeg',
+      uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+      parameters: equipment
+    };
+
+    await FileSystem.uploadAsync('https://nodejs-ifarmo.herokuapp.com/api/equipments', imageUri, options)
+      .then(res => {
+        console.log(res);
+        setRender(true);
+        setOverlayVisible(false);
+      })
+      .catch(err => {
+        alert(err.response.request._response);
+        console.log(err.response.request._response);
+      });
   }
 
   const toggleAddItemOverlay = () => {

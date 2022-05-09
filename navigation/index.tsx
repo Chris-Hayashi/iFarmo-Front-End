@@ -29,6 +29,7 @@ import HomeScreen from '../screens/HomeScreen';
 import { Text, View } from '../components/Themed';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
     <NavigationContainer
@@ -47,12 +48,17 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
+  // const [isUserProfile, setIsUserProfile] = React.useState(false);
   return (
     <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Home" component={BottomTabNavigator} />
-      <Stack.Screen name="UserProfile" component={UserProfileScreen} />
+      <Stack.Screen
+        name="UserProfile"
+        component={UserProfileScreen}
+        options={{ headerShown: true, headerStyle: { backgroundColor: '#FFF5EA' } }}
+      />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
     </Stack.Navigator>
   );
@@ -80,7 +86,10 @@ function BottomTabNavigator({ navigation }: RootTabScreenProps<'HomeTab'>) {
             // color='#444444'
             solid={true}
             style={styles.profileIcon}
-            onPress={() => navigation.navigate('UserProfile')}
+            onPress={() => {
+              // setIsUserProfile(true);
+              navigation.navigate('UserProfile');
+            }}
           />,
         headerRight: () =>
           <Icon

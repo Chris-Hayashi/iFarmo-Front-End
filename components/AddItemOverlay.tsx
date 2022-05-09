@@ -10,7 +10,7 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
     const [imageUri, setImageUri] = useState('');
 
     useEffect(() => {
-        console.log('useEffect running');
+        // console.log('useEffect running');
         (async () => {
             if (Platform.OS !== 'web') {
                 const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -19,7 +19,7 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
                 }
             }
         })();
-        console.log('imageUri (inside useEffect): ', imageUri);
+        // console.log('imageUri (inside useEffect): ', imageUri);
     }, [imageUri]);
 
     let item = new Item();
@@ -54,19 +54,21 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
             quality: 1,
         });
 
-        console.log(result);
+        // console.log(result);
 
         if (!result.cancelled) {
             // console.log('result.uri: ', result.uri);
             setImageUri(result.uri);
-            // console.log('imageUri: ', imageUri);
+            item.setImage(result.uri);
+            
+            // const formData = new FormData();
+            // formData.append('photo', result.uri);
         }
     };
 
     const PhotoUpload = () => {
         if (imageUri === '')
             return (
-
                 <TouchableOpacity onPress={handleChoosePhoto}>
                     <View style={{ flexDirection: 'row' }}>
                         <Icon
@@ -110,7 +112,9 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
                             type='feather'
                             color='grey'
                             style={{ flex: 1, alignSelf: 'flex-end' }}
-                            onPress={() => setImageUri('')}
+                            onPress={() => {
+                                setImageUri('');
+                            }}
                         />
                     </View>
                 </View>
@@ -300,14 +304,18 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
                         // color='black'
                         style={styles.addProductBtn}
                         onPress={() => {
+                            // if ()
+                            // const itemObj = {
+
+                            // };
                             postItem({
                                 'title': item.title,
                                 'type': item.type,
                                 'description': item.description,
                                 'price': item.price,
                                 'unitType': item.unitType,
-                                'city': item.city
-                            });
+                                'city': item.city,
+                            }, imageUri);
                         }}
                     />
                 </>
@@ -318,7 +326,10 @@ const AddItemOverlay = ({ type, postItem, isVisible, onBackdropPressHandler }: a
     return (
         <Overlay
             isVisible={isVisible}
-            onBackdropPress={onBackdropPressHandler}
+            onBackdropPress={() => {
+                onBackdropPressHandler();
+                setImageUri('');
+            }}
             overlayStyle={styles.overlay}
         >
             <OverlayContent />
