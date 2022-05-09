@@ -30,12 +30,20 @@ class Item {
         return this;
     }
     setType(type: any) {
-        if (type === 'Tool')
-            this.type = 'Tools';
-        else if (type === 'Material')
-            this.type = 'Materials';
-        else
+        if (this.itemType === 'product') {
+            console.log('type: ', type);
             this.type = type;
+        }
+
+        // Equipment
+        else {
+            if (type === 'Tool')
+                this.type = 'Tools';
+            else if (type === 'Material')
+                this.type = 'Materials';
+            else
+                this.type = type;
+        }
 
         return this;
     }
@@ -88,13 +96,27 @@ class Item {
     }
 
     getTypes() {
-        if (this.itemType == 'job')
+        if (this.itemType === 'job')
             return (
                 [
                     { label: 'Full-time', value: '1' },
                     { label: 'Part-time', value: '2' },
                     { label: 'Temporary', value: '3' },
                     { label: 'Any', value: '4' }
+                ]
+            );
+        else if (this.itemType === 'product')
+            return (
+                [
+                    { label: 'Vegetable', value: '1' },
+                    { label: 'Fruit', value: '2' },
+                    { label: 'Nuts', value: '3' },
+                    { label: 'Meat', value: '4' },
+                    { label: 'Dairy', value: '5' },
+                    { label: 'Grains', value: '6' },
+                    { label: 'Baked Goods', value: '7' },
+                    { label: 'Plants', value: '8' },
+                    { label: 'Other', value: '9' },
                 ]
             );
 
@@ -111,7 +133,7 @@ class Item {
     }
 
     getUnitTypes() {
-        if (this.itemType == 'job')
+        if (this.itemType === 'job')
             return (
                 [
                     { label: 'One-time', value: '1' },
