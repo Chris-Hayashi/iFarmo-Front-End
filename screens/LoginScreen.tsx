@@ -99,7 +99,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<"Login"
         <Button
           title="Login"
           buttonStyle={{
-            backgroundColor: "#1F672A",
+            backgroundColor: "#1F802A",
             // borderWidth: 2,
             // borderColor: "white",
             borderRadius: 30,

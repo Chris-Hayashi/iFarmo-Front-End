@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Text } from 'react-native-elements';
 import SearchBar from 'react-native-platform-searchbar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
 import Grid from '../components/Grid';
+
 
 // import { Text, View } from '../components/Themed';
 import { RootStackScreenProps } from '../types';
@@ -17,13 +19,25 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
   const [jobs, setJobs] = useState([]);
   const [equipments, setEquipments] = useState([]);
   const [search, setSearch] = useState('');
+  const [render, setRender] = useState(false);
 
+  // Runs when home tab is clicked
+  useEffect(() => {
+    navigation.addListener('focus', () => {
+      getUserRole();
+      getProductsByUser();
+      getJobsByUser();
+      getEquipmentsByUser();
+    })
+  }, []);
+
+  // Runs when render and search
   useEffect(() => {
     getUserRole();
     getProductsByUser();
     getJobsByUser();
     getEquipmentsByUser();
-  }, [search]);
+  }, [render, search]);
 
   const getUserId = async () => {
     var userId = ""
@@ -65,12 +79,9 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
       }
     })
       .then(res => {
-        console.log("GET Products");
         setProducts(res.data);
       })
       .catch(err => {
-        // alert(err.response.request._response);
-
         console.log(err.response.request._response);
       });
   }
@@ -84,11 +95,9 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
       }
     })
       .then(res => {
-        console.log("GET Jobs");
         setJobs(res.data);
       })
       .catch(err => {
-        alert(err.response.request._response);
         console.log(err.response.request._response);
       });
   }
@@ -102,44 +111,35 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
       }
     })
       .then(res => {
-        console.log("GET Equipment");
         setEquipments(res.data);
-        console.log('equipments: ', equipments);
       })
       .catch(err => {
-        alert(err.response.request._response);
         console.log(err.response.request._response);
       });
   }
 
-  const homeContent = () => {
-    if (role === 'farmer') {
-      return <Text></Text>
-    }
-  };
-
   return (
     <View style={styles.container}>
-        <View style={{ display: 'flex', flexDirection: 'row', marginBottom: 0 }}>
-          <SearchBar
-            placeholder='Search'
-            onChangeText={(val) => {
-              setSearch(val);
-              // getProducts();
-            }}
-            value={search}
-            platform='ios'
-            theme='light'
-            style={styles.searchBar}
-            />
-        </View>
-            <ScrollView>
+      <View style={{ display: 'flex', flexDirection: 'row', marginBottom: 0 }}>
+        <SearchBar
+          placeholder='Search'
+          onChangeText={(val) => {
+            setSearch(val);
+            // getProducts();
+          }}
+          value={search}
+          platform='ios'
+          theme='light'
+          style={styles.searchBar}
+        />
+      </View>
+      <ScrollView>
 
         {role === 'farmer'
           ?
           <View style={styles.container}>
             <Text h4={true} style={[styles.text, { marginTop: 0 }]}>Produce</Text>
-            <Grid items={products} type='products' isHome={true} />
+            <Grid items={products} type='products' isHome={true} render={() => setRender(!render)} />
           </View>
           : <View></View>
         }
@@ -148,7 +148,7 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
         <Text h4={true} style={styles.text}>Jobs</Text>
         {jobs.length === 0
           ? <Text style={[styles.text, { marginBottom: 10 }]}>You have not posted any jobs</Text>
-          : <Grid items={jobs} type='jobs' isHome={true} />
+          : <Grid items={jobs} type='jobs' isHome={true} render={() => setRender(!render)} />
         }
         {/* </View> */}
         {/* <Grid items={jobs} type='jobs' isHome={true} /> */}
@@ -156,10 +156,10 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
         <Text h4={true} style={styles.text}>Equipment</Text>
         {equipments.length === 0
           ? <Text style={styles.text}>You have not posted any equipment</Text>
-          : <Grid items={equipments} type='equipments' isHome={true} />
+          : <Grid items={equipments} type='equipments' isHome={true} render={() => setRender(!render)} />
         }
-    </ScrollView>
-      </View>
+      </ScrollView>
+    </View>
   );
 }
 

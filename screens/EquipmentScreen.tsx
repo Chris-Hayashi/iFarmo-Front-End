@@ -135,7 +135,7 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
               title="Other" />
           </Menu>
         </View>
-        <Grid items={itemArray} type='equipments' />
+        <Grid items={itemArray} type='equipments' render={() => setRender(!render)}/>
         <FAB
           visible={fabVisible}
           icon={{ name: 'add', color: 'white' }}

@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, Image, ScrollView, Linking } from 'react-native';
 import { Overlay, Text, Divider, Button, Icon } from 'react-native-elements';
+import DeleteBtn from './DeleteBtn';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 
-const ItemDescOverlay = ({ item, itemImage, isVisible, onBackdropPressHandler, type }: any) => {
+const ItemDescOverlay = ({ item, itemImage, isVisible, hideOverlay, type, render }: any) => {
 
     const [userId, setUserId] = useState("");
 
@@ -202,7 +203,7 @@ const ItemDescOverlay = ({ item, itemImage, isVisible, onBackdropPressHandler, t
     return (
         <Overlay
             isVisible={isVisible}
-            onBackdropPress={onBackdropPressHandler}
+            onBackdropPress={hideOverlay}
             overlayStyle={styles.overlay}
         >
             <ScrollView>
@@ -227,20 +228,7 @@ const ItemDescOverlay = ({ item, itemImage, isVisible, onBackdropPressHandler, t
                             // onPress={() => ShowConfirmDeleteDialog()}
                             />
 
-                            <Button
-                                title='Delete'
-                                titleStyle={{ fontWeight: 'bold' }}
-                                buttonStyle={styles.deleteBtn}
-                                containerStyle={{ width: '100%', marginTop: 0 }}
-                                icon={
-                                    <Icon
-                                        name="delete"
-                                        color="#ffffff"
-                                        iconStyle={{ marginRight: 10 }}
-                                    />
-                                }
-                            // onPress={() => ShowConfirmDeleteDialog()}
-                            />
+                            <DeleteBtn item={item} itemType={type} hideOverlay={hideOverlay} render={render} />
                         </View> : <View></View>}
 
                 </View>
@@ -318,7 +306,7 @@ const styles = StyleSheet.create({
         textAlign: 'right'
     },
     updateBtn: {
-        backgroundColor: '#00b894',
+        backgroundColor: '#1F802A',
         borderWidth: 2,
         borderColor: 'white',
         borderRadius: 10,
@@ -326,16 +314,6 @@ const styles = StyleSheet.create({
         marginRight: 0,
         marginBottom: 0,
         marginTop: 30,
-    },
-    deleteBtn: {
-        backgroundColor: '#ee3333',
-        borderWidth: 2,
-        borderColor: 'white',
-        borderRadius: 10,
-        marginLeft: 0,
-        marginRight: 0,
-        marginBottom: 0,
-        marginTop: 10,
     },
 });
 

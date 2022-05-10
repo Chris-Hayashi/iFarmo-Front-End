@@ -127,7 +127,7 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
               title="I am hiring" />
           </Menu>
         </View>
-        <Grid items={itemArray} type='jobs' />
+        <Grid items={itemArray} type='jobs' render={() => setRender(!render)}/>
         <FAB
           visible={fabVisible}
           icon={{ name: 'add', color: 'white' }}
