@@ -120,16 +120,6 @@ export default function UserProfile({ navigation }: RootStackScreenProps<'UserPr
                         {/* <ScrollView> */}
 
                         <Text style={{ fontSize: 16 }}>{bio}</Text>
-                        <Text>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus commodi dolorem modi, dicta tempore ratione incidunt. Eligendi ratione unde mollitia deserunt et rerum perspiciatis quae consectetur? Pariatur veniam obcaecati aperiam.</Text>
-                        <Text>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus commodi dolorem modi, dicta tempore ratione incidunt. Eligendi ratione unde mollitia deserunt et rerum perspiciatis quae consectetur? Pariatur veniam obcaecati aperiam.</Text>
-                        <Text>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus commodi dolorem modi, dicta tempore ratione incidunt. Eligendi ratione unde mollitia deserunt et rerum perspiciatis quae consectetur? Pariatur veniam obcaecati aperiam.</Text>
-                        <Text>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus commodi dolorem modi, dicta tempore ratione incidunt. Eligendi ratione unde mollitia deserunt et rerum perspiciatis quae consectetur? Pariatur veniam obcaecati aperiam.</Text>
-                        <Text>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus commodi dolorem modi, dicta tempore ratione incidunt. Eligendi ratione unde mollitia deserunt et rerum perspiciatis quae consectetur? Pariatur veniam obcaecati aperiam.</Text>
-                        <Text>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus commodi dolorem modi, dicta tempore ratione incidunt. Eligendi ratione unde mollitia deserunt et rerum perspiciatis quae consectetur? Pariatur veniam obcaecati aperiam.</Text>
-                        <Text>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus commodi dolorem modi, dicta tempore ratione incidunt. Eligendi ratione unde mollitia deserunt et rerum perspiciatis quae consectetur? Pariatur veniam obcaecati aperiam.</Text>
-                        <Text>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus commodi dolorem modi, dicta tempore ratione incidunt. Eligendi ratione unde mollitia deserunt et rerum perspiciatis quae consectetur? Pariatur veniam obcaecati aperiam.</Text>
-                        <Text>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus commodi dolorem modi, dicta tempore ratione incidunt. Eligendi ratione unde mollitia deserunt et rerum perspiciatis quae consectetur? Pariatur veniam obcaecati aperiam.</Text>
-                        <Text>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus commodi dolorem modi, dicta tempore ratione incidunt. Eligendi ratione unde mollitia deserunt et rerum perspiciatis quae consectetur? Pariatur veniam obcaecati aperiam.</Text>
                         {/* </ScrollView> */}
                     </View>
 
@@ -209,7 +199,7 @@ const styles = StyleSheet.create({
         // height: '50%'
     },
     editBtn: {
-        backgroundColor: '#1F672A',
+        backgroundColor: '#1F802A',
         borderWidth: 2,
         borderColor: 'white',
         borderRadius: 30,

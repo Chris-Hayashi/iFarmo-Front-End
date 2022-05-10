@@ -1,4 +1,5 @@
 class Item {
+    '_id' : string;
     'itemType': string;
     'name': string;
     'title': string;

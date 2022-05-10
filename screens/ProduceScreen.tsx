@@ -154,7 +154,7 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
           </Menu>
         </View>
 
-        <Grid items={itemArray} type='products' />
+        <Grid items={itemArray} type='products' render={() => setRender(!render)}/>
         {role === 'farmer'
 
           ? <FAB

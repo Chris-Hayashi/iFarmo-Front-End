@@ -8,7 +8,7 @@ import ItemDescOverlay from './ItemDescOverlay';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const Grid = ({ items, type, isHome }: any) => {
+const Grid = ({ items, type, isHome, render }: any) => {
     const [itemIndex, setItemIndex] = useState(0);
     const [overlayVisible, setOverlayVisible] = useState(false);
 
@@ -153,8 +153,9 @@ const Grid = ({ items, type, isHome }: any) => {
                                 item={items[itemIndex]}
                                 itemImage={getItemImage(items[itemIndex])}
                                 isVisible={overlayVisible}
-                                onBackdropPressHandler={() => setOverlayVisible(!overlayVisible)}
+                                hideOverlay={() => setOverlayVisible(!overlayVisible)}
                                 type={type}
+                                render={render}
                             />
                             <TouchableOpacity
                                 onPress={() => {
