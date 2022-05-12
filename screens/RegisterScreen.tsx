@@ -1,6 +1,6 @@
-import { StyleSheet, TextInput } from 'react-native';
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
+import { StyleSheet, TextInput, View, KeyboardAvoidingView } from 'react-native';
+import { Text, Image } from 'react-native-elements';
+// import { Text, View } from '../components/Themed';
 import { RootStackScreenProps } from '../types';
 import { Input, Button } from 'react-native-elements';
 import { useEffect, useState } from 'react';
@@ -94,41 +94,79 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
 
     <View style={styles.container}>
 
+      <View style={{ alignItems: 'center', marginTop: 100, backgroundColor: '#FFF5EA', }}>
+        <Image containerStyle={styles.iFarmoLogo} source={require('../assets/logos/ifarmo_logo.png')} />
+      </View>
+
+      <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+        <Image containerStyle={styles.iFarmoTitle} source={require('../assets/logos/ifarmo_title.png')} />
+      </View>
+
       {/* User Input */}
-      <Input placeholder='Username' autoCapitalize='none' onChangeText={setUsername}
-      />
-      {usernameErrorMsg.length > 0 && !firstRender && <Text style={styles.textDanger}>{usernameErrorMsg}</Text>}
+      <KeyboardAvoidingView style={styles.userInput}>
+        <Input
+          label='Username'
+          placeholder='Enter your username'
+          autoCapitalize='none'
+          autoCorrect={false}
+          onChangeText={setUsername}
+        />
+        {usernameErrorMsg.length > 0 && !firstRender && <Text style={styles.textDanger}>{usernameErrorMsg}</Text>}
 
-      <Input placeholder='Password' autoCapitalize='none' onChangeText={setPassword} />
-      {passwordErrorMsg.length > 0 && !firstRender && <Text style={styles.textDanger}>{passwordErrorMsg}</Text>}
+        <Input
+          label='Password'
+          placeholder='Enter your password'
+          autoCapitalize='none'
+          onChangeText={setPassword}
+        />
+        {passwordErrorMsg.length > 0 && !firstRender && <Text style={styles.textDanger}>{passwordErrorMsg}</Text>}
 
-      <Input placeholder='E-Mail' autoCapitalize='none' onChangeText={setEmail} />
-      {/* {passwordErrorMsg.length > 0 && !firstRender && <Text style={styles.textDanger}>{passwordErrorMsg}</Text>} */}
+        <Input
+          label='Email'
+          placeholder='Enter your email'
+          autoCapitalize='none'
+          onChangeText={setEmail}
+        />
+        {/* {passwordErrorMsg.length > 0 && !firstRender && <Text style={styles.textDanger}>{passwordErrorMsg}</Text>} */}
 
 
-      <Input placeholder='Full Name' onChangeText={setFullName} />
-      {fullNameErrorMsg.length > 0 && !firstRender && <Text style={styles.textDanger}>{fullNameErrorMsg}</Text>}
+        <Input
+          label='Full Name'
+          placeholder='Enter your full name'
+          onChangeText={setFullName}
+        />
+        {fullNameErrorMsg.length > 0 && !firstRender && <Text style={styles.textDanger}>{fullNameErrorMsg}</Text>}
+
+        {/* <Input placeholder='Password' onChangeText={setPassword} /> */}
+
+        {/* Register Button */}
+        <Button
+          title='Register'
+          buttonStyle={styles.registerBtn}
+          containerStyle={{
+            width: 200,
+            marginHorizontal: 50,
+            marginVertical: 10,
+          }}
+          titleStyle={{ fontWeight: 'bold' }}
+          onPress={registerBtnHandler}
+        />
+
+        <Button
+          title='Cancel'
+          buttonStyle={styles.cancelBtn}
+          containerStyle={{
+            width: 200,
+            marginHorizontal: 50,
+            marginVertical: 10,
+          }}
+          titleStyle={{ fontWeight: 'bold' }}
+          onPress={() => navigation.navigate('Login')}
+        />
 
 
-      {/* <Input placeholder='Password' onChangeText={setPassword} /> */}
 
-      {/* Register Button */}
-      <Button
-        title='Register'
-        buttonStyle={{
-          backgroundColor: 'black',
-          borderWidth: 2,
-          borderColor: 'white',
-          borderRadius: 30,
-        }}
-        containerStyle={{
-          width: 200,
-          marginHorizontal: 50,
-          marginVertical: 10,
-        }}
-        titleStyle={{ fontWeight: 'bold' }}
-        onPress={registerBtnHandler}
-      />
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -137,9 +175,29 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 30
+    backgroundColor: '#FFF5EA',
+  },
+  iFarmoLogo: {
+    width: 150,
+    height: 150,
+    alignContent: 'flex-start',
+    backgroundColor: '#FFF5EA',
+  },
+  iFarmoTitle: {
+    minWidth: 225,
+    height: 50,
+    justifyContent: 'flex-start',
+    padding: 'auto'
+  },
+  userInput: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    backgroundColor: '#FFF5EA',
+    paddingHorizontal: 30,
+    paddingTop: 80,
+    marginTop: 0
   },
   title: {
     fontSize: 20,
@@ -152,5 +210,18 @@ const styles = StyleSheet.create({
   },
   textDanger: {
     color: "#dc3545"
+  },
+  registerBtn: {
+    backgroundColor: "#1F802A",
+    borderWidth: 2,
+    borderColor: 'white',
+    borderRadius: 30,
+    marginTop: 10
+  },
+  cancelBtn: {
+    backgroundColor: "#ADAFBC",
+    borderWidth: 2,
+    borderColor: 'white',
+    borderRadius: 30,
   }
 });

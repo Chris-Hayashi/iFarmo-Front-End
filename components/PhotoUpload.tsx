@@ -21,14 +21,14 @@ const PhotoUpload = ({ item }: { item: Item }) => {
         if (!result.cancelled) {
             await ImageManipulator.manipulateAsync(result.uri, [{ resize: { height: 800, width: 800 } }], {})
                 .then(res => {
-                    item.setImage(res.uri);
+                    item.setImagePath(res.uri);
                     setRender(!render);
                 })
                 .catch(err => console.log(err));
         }
     };
 
-    if (item.image === undefined)
+    if (item.imagePath === undefined || item.imagePath === '')
         return (
             <TouchableOpacity onPress={handleChoosePhoto}>
                 <View style={{ flexDirection: 'row' }}>
@@ -51,13 +51,14 @@ const PhotoUpload = ({ item }: { item: Item }) => {
                 </View>
             </TouchableOpacity>
         );
-    else
+    else {
+        console.log('item.imagePath: ', item.imagePath);
         return (
             <View style={{ flexDirection: 'row' }}>
 
                 <TouchableOpacity style={{ flexDirection: 'row' }} onPress={handleChoosePhoto}>
 
-                    <Image source={{ uri: item.image }} style={styles.image} />
+                    <Image source={{ uri: item.imagePath }} style={styles.image} />
                     <Icon
                         name='check'
                         type='font-awesome-5'
@@ -74,13 +75,14 @@ const PhotoUpload = ({ item }: { item: Item }) => {
                         color='grey'
                         style={{ flex: 1, alignSelf: 'flex-end' }}
                         onPress={() => {
-                            item.setImage(undefined);
+                            item.setImagePath(undefined);
                             setRender(!render);
                         }}
                     />
                 </View>
             </View>
         );
+    }
 }
 
 const styles = StyleSheet.create({

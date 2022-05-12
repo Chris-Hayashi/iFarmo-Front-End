@@ -50,7 +50,7 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
       }
     }
     catch (e) {
-      console.log("damn it");
+      console.log(e);
     }
     return userId;
   }
@@ -59,7 +59,7 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
   const getUserRole = async () => {
     const userId = await getUserId();
 
-    axios.get('https://nodejs-ifarmo.herokuapp.com/api/users/' + userId)
+    await axios.get('https://nodejs-ifarmo.herokuapp.com/api/users/' + userId)
       .then(res => {
         // not sure how to get this to work @CHRIS
         setRole(res.data.role);
@@ -135,26 +135,34 @@ export default function ProduceScreen({ navigation }: RootStackScreenProps<'Prod
       </View>
       <ScrollView>
 
-        {role === 'farmer'
-          ?
-          <View style={styles.container}>
-            <Text h4={true} style={[styles.text, { marginTop: 0 }]}>Produce</Text>
-            <Grid items={products} type='products' isHome={true} render={() => setRender(!render)} />
-          </View>
-          : <View></View>
-        }
+        {/* {role === 'farmer'
+          ? */}
+        {/* <View style={styles.container}> */}
+          <Text h4={true} style={[styles.text, { marginTop: 10 }]}>Produce</Text>
+          {role !== 'farmer' ? <Text style={[styles.text, { marginBottom: 10 }]}>You are not authorized to post products</Text> : <View />}
+          {role === 'farmer' && products.length === 0
+            ? <Text style={[styles.text, { marginBottom: 10 }]}>You have not posted any products</Text>
+            : <View />
+          }
+          <Grid items={products} type='products' isHome={true} render={() => setRender(!render)} />
+
+        {/* </View> */}
+        {/* <View></View> */}
+        {/* } */}
 
         {/* <View style={{padding: 0}}> */}
         <Text h4={true} style={styles.text}>Jobs</Text>
-        {jobs.length === 0
+        {role === 'user' ? <Text style={[styles.text, { marginBottom: 10 }]}>You are not authorized to post jobs</Text> : <View />}
+        { role !== 'user' && jobs.length === 0
           ? <Text style={[styles.text, { marginBottom: 10 }]}>You have not posted any jobs</Text>
-          : <Grid items={jobs} type='jobs' isHome={true} render={() => setRender(!render)} />
+          : <View style={{marginBottom: 10}}><Grid items={jobs} type='jobs' isHome={true} render={() => setRender(!render)} /></View>
         }
         {/* </View> */}
         {/* <Grid items={jobs} type='jobs' isHome={true} /> */}
 
         <Text h4={true} style={styles.text}>Equipment</Text>
-        {equipments.length === 0
+        {role === 'user' ? <Text style={[styles.text, { marginBottom: 10 }]}>You are not authorized to post jobs</Text> : <View />}
+        {role === 'user' && equipments.length === 0
           ? <Text style={styles.text}>You have not posted any equipment</Text>
           : <Grid items={equipments} type='equipments' isHome={true} render={() => setRender(!render)} />
         }

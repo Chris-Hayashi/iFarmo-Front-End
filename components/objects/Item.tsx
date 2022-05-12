@@ -1,5 +1,5 @@
 class Item {
-    '_id' : string;
+    '_id': string;
     'itemType': string;
     'name': string;
     'title': string;
@@ -10,9 +10,51 @@ class Item {
     'price': string;
     'salary': string;
     'city': string;
-    'image': any
+    'image': any;
+    'imagePath': any
 
-    constructor() {
+    // args[0] = item, args[1] = itemType
+    constructor(...args: any[]) {
+
+        if (args.length === 1) {
+            this.itemType = args[0];
+        }
+        else if (args.length === 2) {
+            // console.log('args[0] type: ', args[0].type)
+            this.itemType = args[1];
+            if (this.itemType === 'products') {
+                this.name = args[0].name;
+                this.type = args[0].type;
+                this.description = args[0].description;
+                this.price = args[0].price;
+                this.quantity = args[0].quantity;
+                this.unitType = args[0].unitType;
+                this.city = args[0].city;
+                if (args[0].imagePath !== undefined || args[0].imagePath !== '')
+                    this.imagePath = args[0].imagePath;
+            }
+            else if (this.itemType === 'jobs') {
+                this.title = args[0].title;
+                this.type = args[0].type;
+                this.description = args[0].description;
+                this.salary = args[0].salary;
+                this.unitType = args[0].unitType;
+                this.city = args[0].city;
+            }
+
+            // Equipment
+            else {
+                this.title = args[0].title;
+                this.type = args[0].type;
+                this.description = args[0].description;
+                this.price = args[0].price;
+                this.unitType = args[0].unitType;
+                this.city = args[0].city;
+                if (args[0].imagePath !== undefined || args[0].imagePath !== '')
+                    this.imagePath = args[0].imagePath;
+            }
+        }
+        return this;
     }
 
     setItemType(itemType: any) {
@@ -54,7 +96,7 @@ class Item {
         return this;
     }
 
-    setQuantity(quantity: any) {
+    setQuantity(quantity: string) {
         this.quantity = quantity;
         return this;
     }
@@ -76,7 +118,7 @@ class Item {
         return this;
     }
 
-    setPrice(price: any) {
+    setPrice(price: string) {
         this.price = price;
         return this;
     }
@@ -91,22 +133,13 @@ class Item {
         return this;
     }
 
-    setImage(image: any) {
-        this.image = image;
+    setImagePath(imagePath: any) {
+        this.imagePath = imagePath;
         return this;
     }
 
     getTypes() {
-        if (this.itemType === 'job')
-            return (
-                [
-                    { label: 'Full-time', value: '1' },
-                    { label: 'Part-time', value: '2' },
-                    { label: 'Temporary', value: '3' },
-                    { label: 'Any', value: '4' }
-                ]
-            );
-        else if (this.itemType === 'product')
+        if (this.itemType === 'products')
             return (
                 [
                     { label: 'Vegetable', value: '1' },
@@ -118,6 +151,15 @@ class Item {
                     { label: 'Baked Goods', value: '7' },
                     { label: 'Plants', value: '8' },
                     { label: 'Other', value: '9' },
+                ]
+            );
+        else if (this.itemType === 'jobs')
+            return (
+                [
+                    { label: 'Full-time', value: '1' },
+                    { label: 'Part-time', value: '2' },
+                    { label: 'Temporary', value: '3' },
+                    { label: 'Any', value: '4' }
                 ]
             );
 
@@ -134,7 +176,7 @@ class Item {
     }
 
     getUnitTypes() {
-        if (this.itemType === 'job')
+        if (this.itemType === 'jobs')
             return (
                 [
                     { label: 'One-time', value: '1' },

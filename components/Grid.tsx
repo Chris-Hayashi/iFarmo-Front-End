@@ -4,13 +4,15 @@ import { Card, Text } from 'react-native-elements';
 import { Item } from 'react-native-paper/lib/typescript/components/List/List';
 // import { View } from '../components/Themed';
 import ItemDescOverlay from './ItemDescOverlay';
+import AddItemOverlay from './AddItemOverlay';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const Grid = ({ items, type, isHome, render }: any) => {
     const [itemIndex, setItemIndex] = useState(0);
-    const [overlayVisible, setOverlayVisible] = useState(false);
+    const [itemDescOverlayVisible, setItemDescOverlayVisible] = useState(false);
+    const [addItemOverlayVisible, setAddItemOverlayVisible] = useState(false);
 
 
     const convertDate = (date: any) => {
@@ -142,24 +144,23 @@ const Grid = ({ items, type, isHome, render }: any) => {
                 data={items}
                 renderItem={({ item, index }) => (
                     <Card containerStyle={isHome
-                        ? [styles.card, { minWidth: 0.45 * screenWidth, maxWidth: 0.5 * screenWidth, maxHeight: screenHeight, paddingBottom: 20}]
+                        ? [styles.card, { minWidth: 0.45 * screenWidth, maxWidth: 0.5 * screenWidth, maxHeight: screenHeight, paddingBottom: 20 }]
                         : styles.card}>
 
                         {/* <ScrollView> */}
                         <View>
 
-
                             <ItemDescOverlay
                                 item={items[itemIndex]}
                                 itemImage={getItemImage(items[itemIndex])}
-                                isVisible={overlayVisible}
-                                hideOverlay={() => setOverlayVisible(!overlayVisible)}
+                                isVisible={itemDescOverlayVisible}
+                                hideOverlay={() => setItemDescOverlayVisible(!itemDescOverlayVisible)}
                                 type={type}
                                 render={render}
                             />
                             <TouchableOpacity
                                 onPress={() => {
-                                    setOverlayVisible(!overlayVisible)
+                                    setItemDescOverlayVisible(!itemDescOverlayVisible)
                                     setItemIndex(index);
                                 }}
                             >
