@@ -1,13 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, Image, ScrollView, Linking } from 'react-native';
 import { Overlay, Text, Divider, Button, Icon } from 'react-native-elements';
+import UpdateBtn from './UpdateBtn';
 import DeleteBtn from './DeleteBtn';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
+import AddItemOverlay from './AddItemOverlay';
 
 const ItemDescOverlay = ({ item, itemImage, isVisible, hideOverlay, type, render }: any) => {
 
+    const [addItemOverlayVisible, setAddItemOverlayVisible] = useState(false);
     const [userId, setUserId] = useState("");
+    const [renderItemDesc, setRenderItemDesc] = useState(false);
 
     useEffect(() => {
         getUserId();
@@ -152,7 +156,7 @@ const ItemDescOverlay = ({ item, itemImage, isVisible, hideOverlay, type, render
         else // EQUIPMENT
             return (
                 <View>
-                    <Image 
+                    <Image
                         source={item.imagePath ? { uri: item.imagePath } : itemImage}
                         style={styles.itemImage}
                     />
@@ -213,28 +217,19 @@ const ItemDescOverlay = ({ item, itemImage, isVisible, hideOverlay, type, render
                     {item.postedBy._id.toString() == userId ?
                         // {/* {await isSameUser(item.postedBy._id.toString) ? */}
                         <View>
-                            <Button
-                                title='Update'
-                                titleStyle={{ fontWeight: 'bold' }}
-                                buttonStyle={styles.updateBtn}
-                                containerStyle={{ width: '100%', marginTop: 0 }}
-                                icon={
-                                    <Icon
-                                        name="edit"
-                                        color="#ffffff"
-                                        iconStyle={{ marginRight: 10 }}
-                                    />
-                                }
-                            // onPress={() => ShowConfirmDeleteDialog()}
+                            <UpdateBtn 
+                            item={item} 
+                            itemType={type} 
+                            renderHome={render}
+                            renderItemDesc={() => setRenderItemDesc(!renderItemDesc)}
+                            // toggleAddItemOverlay={() => setAddItemOverlayVisible(!addItemOverlayVisible)}
                             />
 
                             <DeleteBtn item={item} itemType={type} hideOverlay={hideOverlay} render={render} />
                         </View> : <View></View>}
 
                 </View>
-
             </ScrollView>
-            {/* </View> */}
         </Overlay>
     );
 };

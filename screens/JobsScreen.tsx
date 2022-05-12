@@ -4,13 +4,16 @@ import { FAB } from 'react-native-elements';
 import { IconButton, Menu, Provider } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SearchBar from 'react-native-platform-searchbar';
+import jwt_decode from "jwt-decode";
 import { RootStackScreenProps } from '../types';
 import axios from 'axios';
 import Grid from '../components/Grid';
 import AddItemOverlay from '../components/AddItemOverlay';
+import Item from '../components/objects/Item';
 
 export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>) {
 
+  const [role, setRole] = useState('');
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("");
   const [itemArray, setItemArray] = useState([]);
@@ -19,35 +22,49 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   const [filterVisible, setFilterVisible] = useState(false);
   const [render, setRender] = useState(false);
 
-  const jobTypes = [
-    { label: 'Equipment Operator', value: '1' },
-    { label: 'Laborer', value: '2' },
-    { label: 'Other', value: '3' },
-  ];
-  const unitTypes = [
-    { label: 'hr', value: '1' },
-    { label: 'week', value: '2' },
-    { label: 'month', value: '3' }
-  ]
-  let selectedJobType: any = null;
-  let selectedUnitType: any = null;
-
-  // let jobObj = {
-  //   'type': '',
-  //   'title': '',
-  //   'desc': '',
-  //   'salary': '',
-  //   'timeUnit': '',
-  // };
-
-
   type OverlayComponentProps = {};
   type SearchBarComponentProps = {};
 
   useEffect(() => {
+    navigation.addListener('focus', () => {
+      getUserRole();
+      getJobs();
+    })
+  }, []);
+
+  useEffect(() => {
+    getUserRole();
     getJobs();
 
   }, [render, search, filter]);
+
+  const getUserId = async () => {
+    var userId = ""
+    try {
+      const token = await AsyncStorage.getItem('auth-token');
+      if (token != null) {
+        var decoded_token: { _id: string } = jwt_decode(token);
+        userId = decoded_token._id;
+      }
+    }
+    catch (e) {
+      console.log("damn it");
+    }
+    return userId;
+  }
+
+  const getUserRole = async () => {
+    const userId = await getUserId();
+
+    await axios.get('https://nodejs-ifarmo.herokuapp.com/api/users/' + userId)
+      .then(res => {
+        setRole(res.data.role);
+      })
+      .catch(err => {
+        alert(err.response.request._response);
+        console.log(err.response.request._response);
+      });
+  }
 
   const getJobs = async () => {
     await axios.get(`https://nodejs-ifarmo.herokuapp.com/api/jobs?searchKey=${search}&filter=${filter}`)
@@ -61,11 +78,11 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
       });
   }
 
-  const postJob = async (job : any) => {
+  const postJob = async (job: any) => {
     let token: any = await AsyncStorage.getItem("auth-token");
     console.log("token: ", JSON.stringify(token));
 
-    axios.post('https://nodejs-ifarmo.herokuapp.com/api/jobs', job, {
+    await axios.post('https://nodejs-ifarmo.herokuapp.com/api/jobs', job, {
       headers: {
         'auth-token': token
       }
@@ -127,19 +144,22 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
               title="I am hiring" />
           </Menu>
         </View>
-        <Grid items={itemArray} type='jobs' render={() => setRender(!render)}/>
-        <FAB
-          visible={fabVisible}
-          icon={{ name: 'add', color: 'white' }}
-          color="green"
-          onPress={toggleAddItemOverlay}
-          style={styles.fab}
-        />
+        <Grid items={itemArray} type='jobs' render={() => setRender(!render)} />
+        {role !== 'user'
+          ? <FAB
+            visible={fabVisible}
+            icon={{ name: 'add', color: 'white' }}
+            color="green"
+            onPress={toggleAddItemOverlay}
+            style={styles.fab}
+          />
+          : <View></View>
+        }
         <AddItemOverlay
           isVisible={overlayVisible}
           postItem={postJob}
           onBackdropPressHandler={toggleAddItemOverlay}
-          type='job'
+          type='jobs'
         />
 
       </View>

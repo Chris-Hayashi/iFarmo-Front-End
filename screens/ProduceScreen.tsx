@@ -9,8 +9,9 @@ import jwt_decode from "jwt-decode";
 import { RootStackScreenProps } from '../types';
 import axios from 'axios';
 import Grid from '../components/Grid';
-import AddItemOverlay from '../components/AddItemOverlay'
+import AddItemOverlay from '../components/AddItemOverlay';
 import * as FileSystem from 'expo-file-system';
+import Item from '../components/objects/Item';
 
 export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>) {
   const [search, setSearch] = useState('');
@@ -41,6 +42,24 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
     getUserRole();
     getProducts();
   }, [render, search, filter]);
+
+  useEffect(() => {
+    navigation.addListener('focus', () => {
+      const getProducts = async () => {
+        await axios.get(`https://nodejs-ifarmo.herokuapp.com/api/products?searchKey=${search}&filter=${filter}`)
+          .then(res => {
+            setItemArray(res.data);
+          })
+          .catch(err => {
+            alert(err.response.request._response);
+            console.log(err.response.request._response);
+          });
+      }
+
+      getUserRole();
+      getProducts();
+    })
+  }, []);
 
   const getUserId = async () => {
     var userId = ""
@@ -74,7 +93,7 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
   const postProduct = async (product: Record<string, string>, imageUri: string) => {
     let token: any = await AsyncStorage.getItem("auth-token");
 
-    if (imageUri !== undefined) {
+    if (imageUri !== undefined && imageUri !== '') {
       let options = {
         headers: {
           'auth-token': token
@@ -154,7 +173,7 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
           </Menu>
         </View>
 
-        <Grid items={itemArray} type='products' render={() => setRender(!render)}/>
+        <Grid items={itemArray} type='products' render={() => setRender(!render)} />
         {role === 'farmer'
 
           ? <FAB
@@ -170,7 +189,7 @@ export default function HomeScreen({ navigation }: RootStackScreenProps<'Home'>)
           isVisible={overlayVisible}
           postItem={postProduct}
           onBackdropPressHandler={toggleAddItemOverlay}
-          type='product'
+          type='products'
         />
 
 

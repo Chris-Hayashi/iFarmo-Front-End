@@ -51,10 +51,8 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<"Login"
   return (
     <View style={styles.container}>
 
-      {/* User Input */}
       <View style={{ alignItems: 'center', marginTop: 100, backgroundColor: '#FFF5EA', }}>
         <Image containerStyle={styles.iFarmoLogo} source={require('../assets/logos/ifarmo_logo.png')} />
-        {/* <Image containerStyle={styles.iFarmoTitle} source={require('../assets/logos/ifarmo_title.png')} /> */}
       </View>
 
       <View style={{flexDirection: 'row', justifyContent: 'center' }}>

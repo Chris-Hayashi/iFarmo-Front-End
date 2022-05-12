@@ -3,15 +3,18 @@ import { StyleSheet, View } from 'react-native';
 import { FAB } from 'react-native-elements';
 import { IconButton, Menu, Provider } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
 import SearchBar from 'react-native-platform-searchbar';
 import { RootStackScreenProps } from '../types';
 import axios from 'axios';
 import Grid from '../components/Grid';
 import AddItemOverlay from '../components/AddItemOverlay';
 import * as FileSystem from 'expo-file-system';
+import Item from '../components/objects/Item';
 
 export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Equipment'>) {
 
+  const [role, setRole] = useState('');
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("");
   const [itemArray, setItemArray] = useState([]);
@@ -19,6 +22,24 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
   const [render, setRender] = useState(false);
+
+  useEffect(() => {
+    navigation.addListener('focus', () => {
+      const getEquipment = async () => {
+        await axios.get(`https://nodejs-ifarmo.herokuapp.com/api/equipments?searchKey=${search}&filter=${filter}`)
+          .then(res => {
+            console.log("GET EQUIPMENT");
+            setItemArray(res.data);
+          })
+          .catch(err => {
+            alert(err.response.request._response);
+            console.log(err.response.request._response);
+          });
+      }
+      getUserRole();
+      getEquipment();
+    })
+  }, []);
 
   useEffect(() => {
     const getEquipment = async () => {
@@ -32,9 +53,37 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
           console.log(err.response.request._response);
         });
     }
+    getUserRole();
     getEquipment();
-
   }, [render, search, filter]);
+
+  const getUserId = async () => {
+    var userId = ""
+    try {
+      const token = await AsyncStorage.getItem('auth-token');
+      if (token != null) {
+        var decoded_token: { _id: string } = jwt_decode(token);
+        userId = decoded_token._id;
+      }
+    }
+    catch (e) {
+      console.log("damn it");
+    }
+    return userId;
+  }
+
+  const getUserRole = async () => {
+    const userId = await getUserId();
+
+    await axios.get('https://nodejs-ifarmo.herokuapp.com/api/users/' + userId)
+      .then(res => {
+        setRole(res.data.role);
+      })
+      .catch(err => {
+        alert(err.response.request._response);
+        console.log(err.response.request._response);
+      });
+  }
 
   const postEquipment = async (equipment: Record<string, string>, imageUri: string) => {
     let token: any = await AsyncStorage.getItem("auth-token");
@@ -135,15 +184,22 @@ export default function EquipmentScreen({ navigation }: RootStackScreenProps<'Eq
               title="Other" />
           </Menu>
         </View>
-        <Grid items={itemArray} type='equipments' render={() => setRender(!render)}/>
-        <FAB
-          visible={fabVisible}
-          icon={{ name: 'add', color: 'white' }}
-          color="green"
-          onPress={toggleAddItemOverlay}
-          style={styles.fab}
+        <Grid items={itemArray} type='equipments' render={() => setRender(!render)} />
+        {role !== 'user'
+          ? <FAB
+            visible={fabVisible}
+            icon={{ name: 'add', color: 'white' }}
+            color="green"
+            onPress={toggleAddItemOverlay}
+            style={styles.fab}
+          />
+          : <View></View>
+        }
+        <AddItemOverlay
+          isVisible={overlayVisible}
+          postItem={postEquipment}
+          onBackdropPressHandler={toggleAddItemOverlay}
         />
-        <AddItemOverlay isVisible={overlayVisible} postItem={postEquipment} onBackdropPressHandler={toggleAddItemOverlay} />
 
       </View>
     </Provider>
